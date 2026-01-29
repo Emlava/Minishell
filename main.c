@@ -1,20 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/01/29 15:44:55 by elara-va         ###   ########.fr       */
+/*   Created: 2026/01/29 15:10:35 by elara-va          #+#    #+#             */
+/*   Updated: 2026/01/29 15:34:38 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
-# include <stdlib.h>
-# include <stdio.h>
-# include <unistd.h>
-# include <readline/readline.h>
+#include "minishell.h"
 
-#endif
+int	main(void)
+{
+	char	*prompt;
+	char	*usr_command;
+
+	prompt = "42_minishell: ";
+	usr_command = readline(prompt);
+	printf("The command entered by the user was: %s\n", usr_command);
+	free(usr_command);
+	return (0);
+}
