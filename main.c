@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/29 15:10:35 by elara-va          #+#    #+#             */
-/*   Updated: 2026/01/30 18:03:57 by elara-va         ###   ########.fr       */
+/*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
+/*   Updated: 2026/02/08 17:24:03 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,30 +15,44 @@
 int	main(int ac, char *av[], char *envp[])
 {
 	char	*prompt;
-	char	*usr_command;
-	pid_t	child_process;
-	char	*absolute_path;
-	char	*argv[2];
-
+	char	*user_input;
+	
+	//
 	(void)ac;
 	(void)av;
-	printf("This initial version of Minishell will display a prompt and is only capable of handling the ls command.\n\n");
-	prompt = "42_minishell: ";
-	usr_command = readline(prompt);
-	if (ft_strncmp("ls", usr_command, 3) != 0)
-		printf("The command entered by the user was not ls.\n");
-	else
+	(void)envp;
+	//
+	define_prompt(&prompt); // If a command is cd, we'll have to free prompt and 
+	// call this again
+	while (1)
 	{
-		argv[0] = usr_command;
-		argv[1] = NULL;
-		absolute_path = ft_strjoin("/usr/bin", usr_command);
-		child_process = fork();
-		if (child_process == 0)
-			execve("/usr/bin/ls", argv, envp);
-		free(absolute_path);
+		user_input = readline(prompt); // free
+		add_history(user_input);
+		// parsing_function(user_input, cmd_list);
+		if (ft_strncmp(user_input, "exit", 5) == 0)
+		{
+			free(user_input);
+			break ;
+		}
+
+		free(user_input);
 	}
-	wait(NULL);
-	printf("\nThanks for using this simple shell. Bye!\n\n");
-	free(usr_command);
+	if (ft_strncmp(prompt, "42_minishell: ", 15) != 0)
+		free(prompt);
+	rl_clear_history();
 	return (0);
 }
+
+// Resources to free or clear:
+//
+// Allocated inside manage_prompt.c:
+// -user (in some cases) in define_prompt(), freed
+// -host_name (in some cases) in define_prompt(), freed
+// -working_dir (in some cases) in define_prompt() and
+// format_working_dir, both freed
+// -tmp (in some cases) in define_prompt(), freed
+// -prompt (if it's not "42_minishell: "), freed
+//
+// Allocated or used inside main.c:
+// -user_input, freed
+// -history, cleared

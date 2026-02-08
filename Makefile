@@ -3,7 +3,7 @@ LIBRARY = libft/libft.a
 CC = cc
 FLAGS = -Wall -Wextra -Werror
 LINKING_FLAGS = -lreadline
-OBJECTS = main.o
+OBJECTS = main.o manage_prompt.o
 
 .PHONY: all clean fclean re
 
@@ -28,3 +28,4 @@ fclean:
 
 re: fclean all
 	
+# valgrind --leak-check=full --show-leak-kinds=all ./minishell
