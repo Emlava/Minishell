@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 16:57:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/09 23:14:47 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/09 23:31:17 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,9 @@ static int	assign_local_resources(char **user, char **host_or_computer,
 	if (*user == NULL)
 		return (1);
 	*host_or_computer = getenv("HOSTNAME");
+	//
+	// *host_or_computer = NULL; // This is used to debug in my laptop
+	//
 	if (*host_or_computer == NULL)
 	{
 		*host_or_computer = getenv("SESSION_MANAGER");

@@ -1,7 +1,7 @@
 NAME = minishell
 LIBRARY = libft/libft.a
 CC = cc
-FLAGS = -Wall -Wextra -Werror #-fsanitize=address,undefined -g -O0
+FLAGS = -Wall -Wextra -Werror -fsanitize=address#,undefined -g -O0
 LINKING_FLAGS = -lreadline
 OBJECTS = main.o manage_prompt.o
 
