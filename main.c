@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/08 17:24:03 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/09 20:11:23 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int	main(int ac, char *av[], char *envp[])
 //
 // Allocated inside manage_prompt.c:
 // -user (in some cases) in define_prompt(), freed
-// -host_name (in some cases) in define_prompt(), freed
+// -host_or_computer (in some cases) in define_prompt(), freed
 // -working_dir (in some cases) in define_prompt() and
 // format_working_dir, both freed
 // -tmp (in some cases) in define_prompt(), freed
