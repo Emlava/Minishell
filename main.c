@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/09 20:11:23 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/09 22:54:29 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,12 @@ int	main(int ac, char *av[], char *envp[])
 	char	*prompt;
 	char	*user_input;
 	
+	if (ac > 1)
+	{
+		printf("No arguments should be given at program startup\n");
+		return (1);
+	}
 	//
-	(void)ac;
 	(void)av;
 	(void)envp;
 	//

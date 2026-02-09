@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 16:57:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/09 21:04:30 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/09 23:14:47 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ static int	assign_local_resources(char **user, char **host_or_computer,
 {
 	int	i;
 
+	i = 0;
 	*user = getenv("USER");
 	if (*user == NULL)
 		return (1);
@@ -49,23 +50,28 @@ static int	assign_local_resources(char **user, char **host_or_computer,
 			while (*host_or_computer[i + 1] != '.' || *host_or_computer[i + 1] != '\0')
 				i++;
 			*tmp = malloc(sizeof(char) * (i - 4));
+			if (!tmp)
+				return (2);
 			*host_or_computer = ft_memcpy(*tmp, *host_or_computer + 6, i - 5); // free
 			*host_or_computer[i - 6] = '\0';
 			if (ft_strncmp(*host_or_computer, "shi-", 4) || ft_strncmp(*host_or_computer, "fu-", 3
 				|| ft_strncmp(*host_or_computer, "mi-", 3)))
 			{
 				free (*host_or_computer);
-				return (2);
+				return (3);
 			}
 		}
 		else
-			return (3);
+			return (4);
 	}
+	else
+		*tmp = NULL;
 	*working_dir = format_working_dir();
 	if (*working_dir == NULL)
 	{
-		free(*host_or_computer);
-		return (4);
+		if (i != 0)
+			free(*host_or_computer);
+		return (5);
 	}
 	return (0);
 }
@@ -93,8 +99,11 @@ void	define_prompt(char **prompt)
 	{
 		user = ft_strjoin(user, "@"); // free
 		host_or_computer = ft_strjoin(host_or_computer, ":"); // free
-		free(tmp);
-		tmp = NULL;
+		if (tmp != NULL)
+		{
+			free(tmp);
+			tmp = NULL;
+		}
 		if (working_dir[0] == '~')
 			tmp = working_dir;
 		working_dir = ft_strjoin(working_dir, "$ "); // free
