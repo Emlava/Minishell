@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 16:57:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/09 23:31:17 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/10 19:29:00 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,16 +49,16 @@ static int	assign_local_resources(char **user, char **host_or_computer,
 		*host_or_computer = getenv("SESSION_MANAGER");
 		if (*host_or_computer != NULL && ft_strncmp(*host_or_computer, "local/", 6) == 0)
 		{
-			i = 6;
-			while (*host_or_computer[i + 1] != '.' || *host_or_computer[i + 1] != '\0')
+			i = 5;
+			while ((*host_or_computer)[i + 1] != '.' && (*host_or_computer)[i + 1] != '\0')
 				i++;
 			*tmp = malloc(sizeof(char) * (i - 4));
-			if (!tmp)
+			if (!*tmp)
 				return (2);
 			*host_or_computer = ft_memcpy(*tmp, *host_or_computer + 6, i - 5); // free
-			*host_or_computer[i - 6] = '\0';
-			if (ft_strncmp(*host_or_computer, "shi-", 4) || ft_strncmp(*host_or_computer, "fu-", 3
-				|| ft_strncmp(*host_or_computer, "mi-", 3)))
+			(*host_or_computer)[i - 5] = '\0';
+			if (ft_strncmp(*host_or_computer, "shi-", 4) && ft_strncmp(*host_or_computer, "fu-", 3
+				&& ft_strncmp(*host_or_computer, "mi-", 3)))
 			{
 				free (*host_or_computer);
 				return (3);
