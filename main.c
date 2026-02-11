@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/11 19:05:35 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/11 19:48:46 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,8 @@ int	main(int ac, char *av[], char *envp[])
 		return (1);
 	}
 	(void)av;
-	define_prompt(&prompt); // If a command is cd, we'll have to free prompt and 
+	define_prompt(&prompt); // If the command is cd, we'll have to free prompt and 
 	// call this again
-
-	// We might have to copy envp so that our local environment can be modified by the user
 
 	while (1)
 	{
@@ -41,7 +39,7 @@ int	main(int ac, char *av[], char *envp[])
 		//
 		
 		add_history(user_input);
-		// parsing_function(user_input, cmd_list);
+		// cmd_list = parsing_function(user_input);
 		// manage_piping_and_redirection(token_list);
 		// run_command(token_list);
 		
@@ -67,7 +65,6 @@ int	main(int ac, char *av[], char *envp[])
 		if (ft_strncmp(user_input, "exit", 5) == 0) // exit is not being recognized by the child with given path
 		{
 			free(user_input);
-			printf("exit\n");
 			break ;
 		}
 		//
