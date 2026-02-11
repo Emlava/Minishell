@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/10 22:00:55 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/11 19:05:35 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ int	main(int ac, char *av[], char *envp[])
 			char	*absolute_path = ft_strjoin("/usr/bin/", user_input);
 			if (execve(absolute_path, test_av, envp) == -1) // Run simple commands without arguments nor options
 			{
+				printf("minishell: ");
+				perror(user_input);
 				if (ft_strncmp(prompt, "42_minishell: ", 15) != 0)
 					free(prompt);
 				free(user_input);

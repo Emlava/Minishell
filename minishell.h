@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/08 16:58:51 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/11 19:06:26 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 # include <stdlib.h>
 # include <stdio.h>
 # include <unistd.h>
+# include <errno.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <sys/types.h>
