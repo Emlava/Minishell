@@ -6,61 +6,63 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 16:57:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/10 19:29:00 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/12 14:48:38 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	*format_working_dir(void)
+static void	format_working_dir(t_prompt *prompt_resources)
 {
-	char	*working_dir;
-	char	*tmp;
+	char	*local_tmp;
 	int		i;
-
-	working_dir = getcwd(NULL, 0); // free
-	if (working_dir != NULL && ft_strncmp(working_dir, "/home/", 6) == 0)
+	
+	if (prompt_resources->hostname_present == true)
+		prompt_resources->working_dir = getcwd(NULL, 0); // free
+	else
+		prompt_resources->working_dir = getenv("PWD");
+	if (prompt_resources->working_dir != NULL && ft_strncmp(prompt_resources->working_dir, "/home/", 6) == 0)
 	{
-		tmp = working_dir;
+		local_tmp = prompt_resources->working_dir;
 		i = 6;
-		while (working_dir[i] && working_dir[i] != '/')
+		while (prompt_resources->working_dir[i] && prompt_resources->working_dir[i] != '/')
 			i++;
-		working_dir = ft_strjoin("~", working_dir + i); // free
-		free(tmp);
+		prompt_resources->working_dir = ft_strjoin("~", prompt_resources->working_dir + i); // free
+		if (prompt_resources->hostname_present == true)
+			free(local_tmp);
 	}
-	return (working_dir);
 }
 
-static int	assign_local_resources(char **user, char **host_or_computer,
-	char **working_dir, char **tmp)
+static int	assign_local_resources(t_prompt *prompt_resources)
 {
 	int	i;
 
 	i = 0;
-	*user = getenv("USER");
-	if (*user == NULL)
+	prompt_resources->user = getenv("USER");
+	if (prompt_resources->user == NULL)
 		return (1);
-	*host_or_computer = getenv("HOSTNAME");
+	prompt_resources->host_or_computer = getenv("HOSTNAME");
 	//
-	// *host_or_computer = NULL; // This is used to debug in my laptop
+	// prompt_resources->host_or_computer = NULL; // This is used to debug in my laptop
 	//
-	if (*host_or_computer == NULL)
+	if (prompt_resources->host_or_computer == NULL)
 	{
-		*host_or_computer = getenv("SESSION_MANAGER");
-		if (*host_or_computer != NULL && ft_strncmp(*host_or_computer, "local/", 6) == 0)
+		prompt_resources->hostname_present = false;
+		prompt_resources->host_or_computer = getenv("SESSION_MANAGER");
+		if (prompt_resources->host_or_computer != NULL && ft_strncmp(prompt_resources->host_or_computer, "local/", 6) == 0)
 		{
 			i = 5;
-			while ((*host_or_computer)[i + 1] != '.' && (*host_or_computer)[i + 1] != '\0')
+			while ((prompt_resources->host_or_computer)[i + 1] != '.' && (prompt_resources->host_or_computer)[i + 1] != '\0')
 				i++;
-			*tmp = malloc(sizeof(char) * (i - 4));
-			if (!*tmp)
+			prompt_resources->tmp = malloc(sizeof(char) * (i - 4));
+			if (!prompt_resources->tmp)
 				return (2);
-			*host_or_computer = ft_memcpy(*tmp, *host_or_computer + 6, i - 5); // free
-			(*host_or_computer)[i - 5] = '\0';
-			if (ft_strncmp(*host_or_computer, "shi-", 4) && ft_strncmp(*host_or_computer, "fu-", 3
-				&& ft_strncmp(*host_or_computer, "mi-", 3)))
+			prompt_resources->host_or_computer = ft_memcpy(prompt_resources->tmp, prompt_resources->host_or_computer + 6, i - 5); // free
+			(prompt_resources->host_or_computer)[i - 5] = '\0';
+			if (ft_strncmp(prompt_resources->host_or_computer, "shi-", 4) && ft_strncmp(prompt_resources->host_or_computer, "fu-", 3
+				&& ft_strncmp(prompt_resources->host_or_computer, "mi-", 3)))
 			{
-				free (*host_or_computer);
+				free (prompt_resources->host_or_computer);
 				return (3);
 			}
 		}
@@ -68,53 +70,52 @@ static int	assign_local_resources(char **user, char **host_or_computer,
 			return (4);
 	}
 	else
-		*tmp = NULL;
-	*working_dir = format_working_dir();
-	if (*working_dir == NULL)
+	{
+		prompt_resources->hostname_present = true;
+		prompt_resources->tmp = NULL;
+	}
+	format_working_dir(prompt_resources);
+	if (prompt_resources->working_dir == NULL)
 	{
 		if (i != 0)
-			free(*host_or_computer);
+			free(prompt_resources->host_or_computer);
 		return (5);
 	}
 	return (0);
 }
 
-static void	free_local_resources(char *user, char *host_or_computer,
-	char *working_dir, char *tmp)
+static void	free_local_resources(t_prompt *prompt_resources)
 {
-	free(user);
-	free(host_or_computer);
-	free(working_dir);
-	free(tmp);
+	free(prompt_resources->user);
+	free(prompt_resources->host_or_computer);
+	free(prompt_resources->working_dir);
+	free(prompt_resources->tmp);
 	return ;
 }
 
 void	define_prompt(char **prompt)
 {
-	char	*user;
-	char	*host_or_computer;
-	char	*working_dir;
-	char	*tmp;
+	t_prompt	prompt_resources;
 
-	if (assign_local_resources(&user, &host_or_computer, &working_dir, &tmp) != 0)
+	if (assign_local_resources(&prompt_resources) != 0)
 		*prompt = "42_minishell: ";
 	else
 	{
-		user = ft_strjoin(user, "@"); // free
-		host_or_computer = ft_strjoin(host_or_computer, ":"); // free
-		if (tmp != NULL)
+		prompt_resources.user = ft_strjoin(prompt_resources.user, "@"); // free
+		prompt_resources.host_or_computer = ft_strjoin(prompt_resources.host_or_computer, ":"); // free
+		if (prompt_resources.tmp != NULL)
 		{
-			free(tmp);
-			tmp = NULL;
+			free(prompt_resources.tmp);
+			prompt_resources.tmp = NULL;
 		}
-		if (working_dir[0] == '~')
-			tmp = working_dir;
-		working_dir = ft_strjoin(working_dir, "$ "); // free
-		if (tmp != NULL)
-			free(tmp);
-		tmp = ft_strjoin(user, host_or_computer); // free
-		*prompt = ft_strjoin(tmp, working_dir); // free
-		free_local_resources(user, host_or_computer, working_dir, tmp);
+		if (prompt_resources.working_dir[0] == '~')
+			prompt_resources.tmp = prompt_resources.working_dir;
+		prompt_resources.working_dir = ft_strjoin(prompt_resources.working_dir, "$ "); // free
+		if (prompt_resources.tmp != NULL)
+			free(prompt_resources.tmp);
+		prompt_resources.tmp = ft_strjoin(prompt_resources.user, prompt_resources.host_or_computer); // free
+		*prompt = ft_strjoin(prompt_resources.tmp, prompt_resources.working_dir); // free
+		free_local_resources(&prompt_resources);
 	}
 	return ;
 }
