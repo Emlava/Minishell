@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/11 20:30:42 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/12 15:32:39 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ int	main(int ac, char *av[], char *envp[])
 		}
 		else
 			waitpid(pid, NULL, 0);
-		
 		if (ft_strncmp(user_input, "exit", 5) == 0) // exit is not being recognized by the child with given path
 		{
 			free(user_input);
