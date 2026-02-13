@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/13 12:18:47 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/13 12:38:29 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ int	main(int ac, char *av[], char *envp[])
 		if (ft_strncmp(user_input, "exit", 5) == 0)
 		{
 			free(user_input);
+			printf("exit\n");
 			break ;
 		}
 		//
