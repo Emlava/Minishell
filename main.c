@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/12 15:32:39 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/13 10:58:42 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	main(int ac, char *av[], char *envp[])
 	char	*user_input;
 	
 	//
-	char	*test_av[2];
+	char	*test_av[3];
 	//
 	if (ac > 1)
 	{
@@ -36,6 +36,7 @@ int	main(int ac, char *av[], char *envp[])
 		//
 		test_av[0] = user_input;
 		test_av[1] = NULL;
+		test_av[2] = NULL;
 		//
 		
 		add_history(user_input);
@@ -78,6 +79,10 @@ int	main(int ac, char *av[], char *envp[])
 
 // Resources to free or clear:
 //
+// Allocated or used inside main.c:
+// -user_input, freed
+// -history, cleared
+//
 // Allocated inside manage_prompt.c:
 // -user (in some cases) in define_prompt(), freed
 // -host_or_computer (in some cases) in define_prompt(), freed
@@ -85,7 +90,3 @@ int	main(int ac, char *av[], char *envp[])
 // format_working_dir, both freed
 // -tmp (in some cases {two possible instances}) in define_prompt(), freed
 // -prompt (if it's not "42_minishell: "), freed
-//
-// Allocated or used inside main.c:
-// -user_input, freed
-// -history, cleared

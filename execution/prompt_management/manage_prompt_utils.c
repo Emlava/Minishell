@@ -6,8 +6,8 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/12 15:38:09 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/12 15:38:21 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/13 11:27:08 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../../minishell.h"
