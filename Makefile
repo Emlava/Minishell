@@ -28,5 +28,6 @@ fclean:
 
 re: fclean all
 
-leak_check: $(MAKE)
+leak_check:
+	$(MAKE)
 	valgrind --leak-check=full --show-leak-kinds=all --suppressions=valgrind.supp ./minishell

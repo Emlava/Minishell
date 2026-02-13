@@ -1,0 +1,18 @@
+{
+   readline_leak
+   Memcheck:Leak
+   ...
+   fun:readline
+}
+{
+   readline_leak
+   Memcheck:Leak
+   ...
+   fun:add_history
+}
+{
+   bin_leak_suppression
+   Memcheck:Leak
+   ...
+   obj:/usr/bin/*
+}

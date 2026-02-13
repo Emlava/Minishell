@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/13 10:58:42 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/13 12:18:47 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,11 @@ int	main(int ac, char *av[], char *envp[])
 		// manage_piping_and_redirection(token_list);
 		// run_command(token_list);
 		
+		if (ft_strncmp(user_input, "exit", 5) == 0)
+		{
+			free(user_input);
+			break ;
+		}
 		//
 		pid_t	pid = fork();
 		if (pid == 0)
@@ -56,17 +61,13 @@ int	main(int ac, char *av[], char *envp[])
 				if (ft_strncmp(prompt, "42_minishell: ", 15) != 0)
 					free(prompt);
 				free(user_input);
+				free(absolute_path);
 				rl_clear_history();
 				return (1);
 			}
 		}
 		else
 			waitpid(pid, NULL, 0);
-		if (ft_strncmp(user_input, "exit", 5) == 0) // exit is not being recognized by the child with given path
-		{
-			free(user_input);
-			break ;
-		}
 		//
 
 		free(user_input);
