@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   execution.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/13 11:21:24 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/14 19:27:37 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,16 @@ typedef struct s_prompt_resources
 	char	*working_dir;
 	char	*tmp;
 	bool	hostname_present;
+	bool	curr_computer_present;
 }	t_prompt;
 
 // **** prompt_management/manage_prompt.c **** //
 void	define_prompt(char **prompt);
+
+// **** prompt_management/manage_prompt_utils.c **** //
+int		determine_second_field(t_prompt *prompt_resources);
+void	format_working_dir(t_prompt *prompt_resources);
+void	free_and_null_tmp(t_prompt *prompt_resources);
+void	free_prompt_resources(t_prompt *prompt_resources, int instance);
 
 #endif

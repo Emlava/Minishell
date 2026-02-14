@@ -3,7 +3,8 @@ LIBRARY = execution/libft/libft.a
 CC = cc
 FLAGS = -Wall -Wextra -Werror #-fsanitize=address#,undefined -g -O0
 LINKING_FLAGS = -lreadline
-OBJECTS = main.o execution/prompt_management/manage_prompt.o
+OBJECTS = main.o execution/prompt_management/manage_prompt.o execution/prompt_management/manage_prompt_utils.o \
+
 
 .PHONY: all clean fclean re leak_check
 
