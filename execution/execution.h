@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/14 19:27:37 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/15 18:38:17 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <stdbool.h>
-# include "libft/libft.h"
+# include "../libft/libft.h"
 
 typedef struct s_prompt_resources
 {

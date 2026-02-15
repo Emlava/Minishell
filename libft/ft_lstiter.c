@@ -1,18 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   ft_lstiter.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/13 11:22:59 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/15 18:35:27 by elara-va         ###   ########.fr       */
+/*   Created: 2025/08/30 15:32:41 by hudescam          #+#    #+#             */
+/*   Updated: 2025/08/30 15:40:02 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
-#include "execution/execution.h"
-#include "parsing/parsing.h" // The name must be changed to parsing.h
+#include "libft.h"
 
-#endif
+void	ft_lstiter(t_list *lst, void (*f)(void *))
+{
+	t_list	*temp;
+
+	temp = lst;
+	while (temp)
+	{
+		f(temp->content);
+		temp = temp->next;
+	}
+}

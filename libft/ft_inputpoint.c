@@ -1,18 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   ft_inputpoint.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/13 11:22:59 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/15 18:35:27 by elara-va         ###   ########.fr       */
+/*   Created: 2025/07/19 16:29:10 by hudescam          #+#    #+#             */
+/*   Updated: 2025/09/17 14:47:07 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
-#include "execution/execution.h"
-#include "parsing/parsing.h" // The name must be changed to parsing.h
+#include "libft.h"
 
-#endif
+int	ft_inputpoint(void *point)
+{
+	unsigned long	point2;
+
+	point2 = (unsigned long) point;
+	if (point == 0)
+		return (ft_inputstr("(nil)"));
+	return (ft_inputstr("0x") + ft_inputhexa(point2, "0123456789abcdef"));
+}

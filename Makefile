@@ -1,5 +1,5 @@
 NAME = minishell
-LIBRARY = execution/libft/libft.a
+LIBRARY = libft/libft.a
 CC = cc
 FLAGS = -Wall -Wextra -Werror #-fsanitize=address#,undefined -g -O0
 LINKING_FLAGS = -lreadline
@@ -11,7 +11,7 @@ OBJECTS = main.o execution/prompt_management/manage_prompt.o execution/prompt_ma
 all: $(NAME)
 
 $(LIBRARY):
-	$(MAKE) -C execution/libft
+	$(MAKE) -C libft
 
 %.o: %.c
 	$(CC) $(FLAGS) -c $< -o $@
@@ -20,11 +20,11 @@ $(NAME): $(LIBRARY) $(OBJECTS)
 	   $(CC) $(FLAGS) $(OBJECTS) $(LIBRARY) $(LINKING_FLAGS) -o $(NAME)
 
 clean:
-	$(MAKE) -C execution/libft clean
+	$(MAKE) -C libft clean
 	rm -f $(OBJECTS)
 
 fclean:
-	$(MAKE) -C execution/libft fclean
+	$(MAKE) -C libft fclean
 	rm -f $(OBJECTS) $(NAME)
 
 re: fclean all

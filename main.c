@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/13 12:38:29 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/15 21:07:58 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ int	main(int ac, char *av[], char *envp[])
 {
 	char	*prompt;
 	char	*user_input;
+	// t_cmd	*command_node;
+	int		prev_exit_status;
 	
 	//
 	char	*test_av[3];
@@ -28,10 +30,10 @@ int	main(int ac, char *av[], char *envp[])
 	(void)av;
 	define_prompt(&prompt); // If the command is cd, we'll have to free prompt and 
 	// call this again
-
 	while (1)
 	{
 		user_input = readline(prompt); // free
+		add_history(user_input);
 		
 		//
 		test_av[0] = user_input;
@@ -39,10 +41,15 @@ int	main(int ac, char *av[], char *envp[])
 		test_av[2] = NULL;
 		//
 		
-		add_history(user_input);
-		// cmd_list = parsing_function(user_input);
-		// manage_piping_and_redirection(token_list);
-		// run_command(token_list);
+		// command_node = parsing_function(user_input);
+		// while (cmd_list->next != NULL)
+		// {
+		// 		manage_piping_and_redirection(token_list);
+		//		if (command_node->is_builtin == true)
+		//			prev_exit_status = manage_builtin(command_node->argv, prev_exit_status);
+		//		else
+		//	 		run_executable(command_node);
+		// }
 		
 		if (ft_strncmp(user_input, "exit", 5) == 0)
 		{

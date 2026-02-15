@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 16:57:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/14 19:27:10 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/15 16:00:27 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,6 @@ static int	format_prompt_substrings(t_prompt *prompt_resources)
 
 static int	put_prompt_together(t_prompt *prompt_resources, char **prompt)
 {
-	//
-	printf("computer: %s\n", prompt_resources->host_or_computer);
-	//
 	if (format_prompt_substrings(prompt_resources) != 0)
 		return (1);
 	prompt_resources->tmp = ft_strjoin(prompt_resources->user,
