@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/15 21:07:58 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/16 19:31:30 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,7 @@ int	main(int ac, char *av[], char *envp[])
 		//	 		run_executable(command_node);
 		// }
 		
-		if (ft_strncmp(user_input, "exit", 5) == 0)
-		{
-			free(user_input);
-			printf("exit\n");
-			break ;
-		}
-		//
+		// This will be in run_executable()
 		pid_t	pid = fork();
 		if (pid == 0)
 		{
