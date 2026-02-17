@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/16 19:31:30 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/17 20:33:56 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,10 @@ int	main(int ac, char *av[], char *envp[])
 		// {
 		// 		manage_piping_and_redirection(token_list);
 		//		if (command_node->is_builtin == true)
+		//		{
+		//			// *
 		//			prev_exit_status = manage_builtin(command_node->argv, prev_exit_status);
+		//		}
 		//		else
 		//	 		run_executable(command_node);
 		// }

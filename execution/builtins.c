@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:14:19 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/16 21:02:17 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/17 20:33:23 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,23 @@ int	ft_echo(char **argv)
 	return (0);
 }
 
+int	ft_pwd(char **argv)
+{
+	char	*working_dir;
+
+	if (argv[1] != NULL && argv[1][0] == '-')
+	{
+		printf("minishell: pwd: no options for this builtin\n");
+		return (1);
+	}
+	working_dir = getcwd(NULL, 0); // Free
+	if (working_dir == NULL)
+		return (2);
+	printf("%s\n", working_dir);
+	free(working_dir);
+	return (0);
+}
+
 int	manage_builtin(char **argv, int prev_exit_status)
 {
 	if (ft_strncmp(argv[0], "echo", 5) == 0)
@@ -51,7 +68,7 @@ int	manage_builtin(char **argv, int prev_exit_status)
 		return (ft_unset(argv));
 	if (ft_strncmp(argv[0], "env", 4) == 0)
 		return (ft_env(argv));
-	if (ft_strncmp(argv[0], "exit", 5) == 0)
+	if (ft_strncmp(argv[0], "exit", 5) == 0) // Put this where the commented * is in the main
 	{
 		// clean_up(things to free or close);
 		printf("exit\n"); // Make sure this goes to the terminal
@@ -59,3 +76,7 @@ int	manage_builtin(char **argv, int prev_exit_status)
 		exit(prev_exit_status);
 	}
 }
+
+// Things to free:
+// ft_pdw():
+// 	-working_dir
