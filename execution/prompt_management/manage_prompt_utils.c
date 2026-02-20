@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/12 15:38:09 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/14 19:29:37 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/19 14:05:35 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void	format_working_dir(t_prompt *prompt_resources)
 	if (prompt_resources->hostname_present == true)
 		prompt_resources->working_dir = getcwd(NULL, 0); // free
 	else
-		prompt_resources->working_dir = getenv("PWD");
+		prompt_resources->working_dir = getenv("PWD"); // Maybe also use getwcd()?
 	if (prompt_resources->working_dir != NULL
 		&& ft_strncmp(prompt_resources->working_dir, "/home/", 6) == 0)
 	{

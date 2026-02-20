@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
+/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 20:33:23 by hudescam          #+#    #+#             */
-/*   Updated: 2025/10/07 17:49:03 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/02/20 12:36:13 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <stdarg.h>
 # include <stdlib.h>
 # include <fcntl.h>
+# include "ft_dprintf/ft_dprintf.h"
 
 typedef struct s_list
 {

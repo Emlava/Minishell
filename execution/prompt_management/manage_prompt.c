@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 16:57:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/15 16:00:27 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/19 19:24:18 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,3 +85,11 @@ void	define_prompt(char **prompt)
 		*prompt = "42_minishell: ";
 	return ;
 }
+
+// Resources to free:
+// -user (in some cases) in define_prompt(), freed
+// -host_or_computer (in some cases) in define_prompt(), freed
+// -working_dir (in some cases) in define_prompt() and
+// format_working_dir, both freed
+// -tmp (in some cases {two possible instances}) in define_prompt(), freed
+// -prompt (if it's not "42_minishell: "), freed
