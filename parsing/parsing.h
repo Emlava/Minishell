@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 19:38:36 by hudescam          #+#    #+#             */
-/*   Updated: 2026/02/20 13:53:41 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/02/20 18:22:20 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <stdlib.h>
 # include <stdio.h>
 # include <signal.h>
+# include <readline/readline.h>
 # include "../libft/libft.h"
 
 typedef enum e_token_type
@@ -85,5 +86,7 @@ int		check_syntax(t_token *tokens);
 
 void	sigint_handler(int sig);
 void	init_signals(void);
+
+t_cmd	*start_parsing(char *line);
 
 #endif

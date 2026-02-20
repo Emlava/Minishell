@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:14:19 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/20 12:08:26 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/20 19:18:21 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,28 +96,20 @@ int	ft_pwd(char **argv)
 // 	}
 // }
 
-int	manage_builtin(char **argv, int prev_exit_status, char **prompt)
+int	manage_builtin(t_cmd *command, int curr_exit_status, char **local_envp, char **prompt)
 {
-	if (ft_strncmp(argv[0], "echo", 5) == 0)
-		return (ft_echo(argv));
-	if (ft_strncmp(argv[0], "cd", 3) == 0)
-		return (ft_cd(argv, prompt));
-	if (ft_strncmp(argv[0], "pwd", 4) == 0)
-		return (ft_pwd(argv));
-	if (ft_strncmp(argv[0], "export", 7) == 0)
-		return (ft_export(argv));
-	if (ft_strncmp(argv[0], "unset", 6) == 0)
-		return (ft_unset(argv));
-	if (ft_strncmp(argv[0], "env", 4) == 0)
-		return (ft_env(argv));
-	if (ft_strncmp(argv[0], "exit", 5) == 0) // Put this where the commented * is in the main
-	{
-		// print error before exiting if argv[1] != NULL, but return 1
-		// clean_up(things to free or close);
-		printf("exit\n"); // Make sure this goes to the terminal
-		// if redirections were implemented
-		exit(prev_exit_status);
-	}
+	if (command->is_builtin == 1)
+		return (ft_echo(command->argv));
+	if (command->is_builtin == 2)
+		return (ft_cd(command->argv, prompt));
+	if (command->is_builtin == 3)
+		return (ft_pwd(command->argv));
+	if (command->is_builtin == 4)
+		return (ft_export(command->argv));
+	if (command->is_builtin == 5)
+		return (ft_unset(command->argv));
+	if (command->is_builtin == 6)
+		return (ft_env(command->argv));
 }
 
 // Things to free or close:

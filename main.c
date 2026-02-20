@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/20 13:15:41 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/20 19:18:21 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ char	**duplicate_environment(char *envp[])
 	if (env_duplicate == NULL)
 		return (NULL);
 	i = 0;
-	while (i < env_var_count) // Should it be i + 1? What's the last variable?
+	while (i < env_var_count)
 	{
 		env_duplicate[i] = ft_strdup(envp[i]); // free each
 		if (env_duplicate[i] == NULL)
@@ -58,7 +58,8 @@ int	main(int ac, char *av[], char *envp[])
 	char	*prompt;
 	char	*user_input;
 	t_cmd	*command_list;
-	// int		prev_exit_status;
+	t_cmd	*curr_command_node;
+	int		curr_exit_status;
 	
 	if (ac > 1)
 	{
@@ -70,50 +71,33 @@ int	main(int ac, char *av[], char *envp[])
 		return (2);
 	(void)av;
 	define_prompt(&prompt);
+	curr_exit_status = 0;
 	while (1)
 	{
 		user_input = readline(prompt); // free
 		add_history(user_input);
 		command_list = start_parsing(user_input);
-		//
-		printf("This is the first char of the first command: %c\n", command_list->argv[0][0]);
-		printf("This is the first command: %s\n", command_list->argv[0]);
-		//
+		curr_command_node = command_list;
 
-		//
-		// t_cmd	*curr_command_node;
-		// int		i;
-		
-		// curr_command_node = command_list;
-		// while (curr_command_node)
-		// {
-		// 	i = 0;
-		// 	while (curr_command_node->argv[i])
-		// 	{
-		// 		printf("%s|", curr_command_node->argv[i]);
-		// 		i++;
-		// 	}
-		// 	printf("\nBuiltin: ");
-		// 	if (curr_command_node->is_builtin == true)
-		// 		printf("yes\n\n");
-		// 	else
-		// 		printf("no\n\n");
-		// 	curr_command_node = curr_command_node->next;
-		// }
-		//
-		
-		// while (cmd_list->next != NULL)
-		// {
-		// 		manage_piping_and_redirection(token_list);
-		//		if (command_list->is_builtin == true)
-		//		{
-		//			// *
-		//			// ft_cd here
-		//			prev_exit_status = manage_builtin(command_list->argv, prev_exit_status, &prompt);
-		//		}
-		//		else
-		//	 		run_executable(command_list);
-		// }
+		while (curr_command_node != NULL)
+		{
+				manage_piping_and_redirection(curr_command_node);
+				if (command_list->is_builtin == false)
+			 		run_executable(command_list);
+				else
+				{
+					// WE LEFT OFF HERE, check notes in phone
+					if (curr_command_node->is_builtin == 7)
+					{
+						// print error messages if neccesary and do not exit
+						printf("exit\n"); // Make sure this goes to the terminal
+						// if redirections were implemented
+						// clean_up(things to free or close);
+						return (curr_exit_status);
+					}
+					curr_exit_status = manage_builtin(command_list->argv, curr_exit_status, &prompt);
+				}
+		}
 		
 		// // This will be in run_executable()
 		// pid_t	pid = fork();

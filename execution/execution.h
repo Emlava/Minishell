@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/20 12:29:22 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/20 19:18:21 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,6 @@ void	free_and_null_tmp(t_prompt *prompt_resources);
 void	free_prompt_resources(t_prompt *prompt_resources, int instance);
 
 // **** builtins.c **** //
-int		manage_builtin(char **argv, int prev_exit_status, char **prompt);
+int		manage_builtin(char **argv, int curr_exit_status, char **prompt);
 
 #endif
