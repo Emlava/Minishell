@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/20 12:43:31 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/20 13:15:41 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,8 +135,8 @@ int	main(int ac, char *av[], char *envp[])
 		// else
 		// 	waitpid(pid, NULL, 0); // Change this so that it gets the return status
 		//
-
 		free(user_input);
+		free_cmds(command_list);
 	}
 	free_str_arr(local_envp);
 	if (ft_strncmp(prompt, "42_minishell: ", 15) != 0)
