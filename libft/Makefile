@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+         #
+#    By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/14 13:05:16 by hudescam          #+#    #+#              #
-#    Updated: 2026/02/20 12:27:38 by elara-va         ###   ########.fr        #
+#    Updated: 2026/02/21 12:00:37 by hudescam         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ LIBC =	ft_atoi.c ft_bzero.c ft_calloc.c ft_isalnum.c ft_isalpha.c \
 		ft_strnstr.c ft_strrchr.c ft_tolower.c ft_toupper.c \
 		ft_inputchar.c ft_inputhexa.c ft_inputnbr.c ft_inputpoint.c \
 		ft_inputstr.c ft_inputunsid.c ft_printf.c get_next_line.c \
-		get_next_line_utils.c
+		get_next_line_utils.c ft_strcmp.c
 
 ADDITIONAL	=	ft_itoa.c ft_putchar_fd.c ft_putendl_fd.c ft_putnbr_fd.c ft_putstr_fd.c \
 				ft_split.c ft_strjoin.c ft_strmapi.c ft_strtrim.c ft_substr.c ft_striteri.c \
