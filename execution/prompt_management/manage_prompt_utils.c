@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/12 15:38:09 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/19 14:05:35 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/21 22:06:34 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static int	determine_computer(t_prompt *prompt_resources)
 {
 	int	i;
 
-	prompt_resources->host_or_computer = getenv("SESSION_MANAGER");
+	prompt_resources->host_or_computer = get_local_env(prompt_resources->envp, "SESSION_MANAGER");
 	if (prompt_resources->host_or_computer != NULL
 		&& ft_strncmp(prompt_resources->host_or_computer, "local/", 6) == 0)
 	{
@@ -40,37 +40,32 @@ static int	determine_computer(t_prompt *prompt_resources)
 	return (0);
 }
 
-int	determine_second_field(t_prompt *prompt_resources)
+int	determine_second_field(t_prompt *prompt_resources, bool *hostname_present)
 {
-	int	determine_computer_return_value;
-
-	prompt_resources->host_or_computer = getenv("HOSTNAME");
+	prompt_resources->host_or_computer = get_local_env(prompt_resources->envp, "HOSTNAME");
 	if (prompt_resources->host_or_computer == NULL)
 	{
-		prompt_resources->hostname_present = false;
-		determine_computer_return_value = determine_computer(prompt_resources);
-		if (determine_computer_return_value == 1)
+		*hostname_present = false;
+		if (determine_computer(prompt_resources) != 0)
 			return (1);
-		if (determine_computer_return_value == 2)
-			prompt_resources->host_or_computer = "42_minishell";
 	}
 	else
 	{
-		prompt_resources->hostname_present = true;
+		*hostname_present = true;
 		prompt_resources->tmp = NULL;
 	}
 	return (0);
 }
 
-void	format_working_dir(t_prompt *prompt_resources)
+void	format_working_dir(t_prompt *prompt_resources, bool hostname_present)
 {
 	char	*local_tmp;
 	int		i;
 
-	if (prompt_resources->hostname_present == true)
+	if (hostname_present == true)
 		prompt_resources->working_dir = getcwd(NULL, 0); // free
 	else
-		prompt_resources->working_dir = getenv("PWD"); // Maybe also use getwcd()?
+		prompt_resources->working_dir = get_local_env(prompt_resources->envp, "PWD"); // Maybe also use getcwd()? I think the problem was in goinfre
 	if (prompt_resources->working_dir != NULL
 		&& ft_strncmp(prompt_resources->working_dir, "/home/", 6) == 0)
 	{
@@ -81,7 +76,7 @@ void	format_working_dir(t_prompt *prompt_resources)
 			i++;
 		prompt_resources->working_dir = ft_strjoin("~",
 				prompt_resources->working_dir + i); // free
-		if (prompt_resources->hostname_present == true)
+		if (hostname_present == true)
 			free(local_tmp);
 	}
 	return ;

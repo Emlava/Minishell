@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/21 16:44:19 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/21 22:35:26 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,15 +22,16 @@
 # include <sys/wait.h>
 # include <stdbool.h>
 # include <dirent.h>
+# include "../parsing/parsing.h"
 # include "../libft/libft.h"
 
 typedef struct s_prompt_resources
 {
+	char	**envp;
 	char	*user;
 	char	*host_or_computer;
 	char	*working_dir;
 	char	*tmp;
-	bool	hostname_present;
 	bool	curr_computer_present;
 }	t_prompt;
 
@@ -44,11 +45,12 @@ typedef struct s_resources
 }	t_resources;
 
 // **** prompt_management/manage_prompt.c **** //
-void	define_prompt(char **prompt);
+char	*get_local_env(char **local_envp, char *name);
+void	define_prompt(char **prompt, char **local_envp);
 
 // **** prompt_management/manage_prompt_utils.c **** //
-int		determine_second_field(t_prompt *prompt_resources);
-void	format_working_dir(t_prompt *prompt_resources);
+int		determine_second_field(t_prompt *prompt_resources, bool *hostname_present);
+void	format_working_dir(t_prompt *prompt_resources, bool hostname_present);
 void	free_and_null_tmp(t_prompt *prompt_resources);
 void	free_prompt_resources(t_prompt *prompt_resources, int instance);
 

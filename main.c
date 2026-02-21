@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/21 16:31:08 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/21 23:21:40 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,22 +53,30 @@ int	main(int ac, char *av[], char *envp[])
 	if (resources.local_envp == NULL)
 		return (2);
 	(void)av;
-	define_prompt(&resources.prompt);
+	resources.prompt = NULL;
+	define_prompt(&resources.prompt, resources.local_envp);
 	resources.curr_exit_status = 0;
 	while (1)
 	{
-		resources.user_input = readline(resources.prompt); // free
+		if (resources.prompt != NULL)
+			resources.user_input = readline(resources.prompt); // free
+		else
+			resources.user_input = readline("42_minishell: ");
 		add_history(resources.user_input);
 		resources.command_list = start_parsing(resources.user_input);
 		curr_command_node = resources.command_list;
 
 		while (curr_command_node != NULL)
 		{
-			manage_piping_and_redirection(curr_command_node);
-			if (curr_command_node->builtin == false)
-				resources.curr_exit_status = run_executable(curr_command_node->argv, &resources);
-			else
+			//
+			// define_prompt(&resources.prompt, resources.local_envp);
+			//
+			// manage_piping_and_redirection(curr_command_node);
+			if (curr_command_node->builtin)
 				resources.curr_exit_status = manage_builtin(curr_command_node, &resources);
+			// else
+			// 	resources.curr_exit_status = run_executable(curr_command_node->argv, &resources);
+			curr_command_node = curr_command_node->next;
 		}
 		
 		// // This will be in run_executable()
@@ -95,7 +103,7 @@ int	main(int ac, char *av[], char *envp[])
 		free_cmds(resources.command_list);
 	}
 	free_str_arr(resources.local_envp);
-	if (ft_strncmp(resources.prompt, "42_minishell: ", 15) != 0)
+	if (resources.prompt != NULL)
 		free(resources.prompt);
 	// close fds
 	rl_clear_history();
