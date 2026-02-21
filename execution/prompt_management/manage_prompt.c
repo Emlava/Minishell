@@ -6,11 +6,32 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 16:57:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/19 19:24:18 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/21 17:26:45 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
+
+// Check where to place this function and add to execution.h
+char	*get_local_env(char **local_envp, char *name)
+{
+	char	*formatted_name;
+	size_t	formatted_name_len;
+	int		i;
+
+	formatted_name = ft_strjoin(name, "="); // free
+	if (formatted_name == NULL)
+		return (NULL);
+	formatted_name_len = ft_strlen(formatted_name);
+	i = 0;
+	while (local_envp[i] != NULL
+		&& ft_strncmp(local_envp[i], formatted_name, formatted_name_len))
+		i++;
+	free(formatted_name);
+	if (local_envp[i] == NULL)
+		return (NULL);
+	return (local_envp[i] + formatted_name_len);
+}
 
 static int	assign_local_resources(t_prompt *prompt_resources)
 {

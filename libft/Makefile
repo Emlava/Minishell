@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+         #
+#    By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/14 13:05:16 by hudescam          #+#    #+#              #
-#    Updated: 2026/02/21 12:00:37 by hudescam         ###   ########.fr        #
+#    Updated: 2026/02/21 15:37:54 by elara-va         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ LIBC =	ft_atoi.c ft_bzero.c ft_calloc.c ft_isalnum.c ft_isalpha.c \
 ADDITIONAL	=	ft_itoa.c ft_putchar_fd.c ft_putendl_fd.c ft_putnbr_fd.c ft_putstr_fd.c \
 				ft_split.c ft_strjoin.c ft_strmapi.c ft_strtrim.c ft_substr.c ft_striteri.c \
 				ft_dprintf/ft_dprintf.c ft_dprintf/ft_d_csu_percent.c ft_dprintf/ft_d_p.c \
-				ft_dprintf/ft_d_di.c ft_dprintf/ft_d_xx.c
+				ft_dprintf/ft_d_di.c ft_dprintf/ft_d_xx.c ft_free_str_arr.c ft_is_numeric_str.c
 
 BONUS	=	ft_lstadd_back.c ft_lstadd_front.c ft_lstclear.c ft_lstdelone.c ft_lstiter.c \
 			ft_lstlast.c ft_lstmap.c ft_lstnew.c ft_lstsize.c

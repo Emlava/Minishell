@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/20 19:18:21 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/21 16:44:19 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,15 @@ typedef struct s_prompt_resources
 	bool	curr_computer_present;
 }	t_prompt;
 
+typedef struct s_resources
+{
+	char			**local_envp;
+	char			*prompt;
+	char			*user_input;
+	t_cmd			*command_list;
+	unsigned char	curr_exit_status;
+}	t_resources;
+
 // **** prompt_management/manage_prompt.c **** //
 void	define_prompt(char **prompt);
 
@@ -44,6 +53,10 @@ void	free_and_null_tmp(t_prompt *prompt_resources);
 void	free_prompt_resources(t_prompt *prompt_resources, int instance);
 
 // **** builtins.c **** //
-int		manage_builtin(char **argv, int curr_exit_status, char **prompt);
+int		manage_builtin(t_cmd *command, t_resources *resources);
+
+// **** builtins_utils.c **** //
+int		update_local_environment(char **local_envp);
+void	exit_cleanup(t_resources *resources);
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 20:33:23 by hudescam          #+#    #+#             */
-/*   Updated: 2026/02/21 12:00:27 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/02/21 15:38:21 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,5 +87,9 @@ size_t	ft_strlcat(char *dst, const char *src, size_t dsize);
 t_list	*ft_lstlast(t_list *lst);
 t_list	*ft_lstnew(void *content);
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
+
+// **** Added for minishell **** //
+void	free_str_arr(char **str_arr);
+int		ft_is_numeric_str(char *str);
 
 #endif

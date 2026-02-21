@@ -6,24 +6,11 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/20 19:18:21 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/21 16:31:08 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	free_str_arr(char **str_arr)
-{
-	size_t	i;
-
-	if (str_arr == NULL)
-		return ;
-	i = 0;
-	while (str_arr[i])
-		free(str_arr[i++]);
-	free(str_arr);
-	return ;
-}
 
 char	**duplicate_environment(char *envp[])
 {
@@ -54,49 +41,34 @@ char	**duplicate_environment(char *envp[])
 
 int	main(int ac, char *av[], char *envp[])
 {
-	char	**local_envp;
-	char	*prompt;
-	char	*user_input;
-	t_cmd	*command_list;
-	t_cmd	*curr_command_node;
-	int		curr_exit_status;
+	t_resources	resources;
+	t_cmd		*curr_command_node;
 	
 	if (ac > 1)
 	{
 		ft_dprintf(2, "No arguments should be given at program startup.\n");
 		return (1);
 	}
-	local_envp = duplicate_environment(envp); // free
-	if (local_envp == NULL)
+	resources.local_envp = duplicate_environment(envp); // free
+	if (resources.local_envp == NULL)
 		return (2);
 	(void)av;
-	define_prompt(&prompt);
-	curr_exit_status = 0;
+	define_prompt(&resources.prompt);
+	resources.curr_exit_status = 0;
 	while (1)
 	{
-		user_input = readline(prompt); // free
-		add_history(user_input);
-		command_list = start_parsing(user_input);
-		curr_command_node = command_list;
+		resources.user_input = readline(resources.prompt); // free
+		add_history(resources.user_input);
+		resources.command_list = start_parsing(resources.user_input);
+		curr_command_node = resources.command_list;
 
 		while (curr_command_node != NULL)
 		{
-				manage_piping_and_redirection(curr_command_node);
-				if (command_list->is_builtin == false)
-			 		run_executable(command_list);
-				else
-				{
-					// WE LEFT OFF HERE, check notes in phone
-					if (curr_command_node->is_builtin == 7)
-					{
-						// print error messages if neccesary and do not exit
-						printf("exit\n"); // Make sure this goes to the terminal
-						// if redirections were implemented
-						// clean_up(things to free or close);
-						return (curr_exit_status);
-					}
-					curr_exit_status = manage_builtin(command_list->argv, curr_exit_status, &prompt);
-				}
+			manage_piping_and_redirection(curr_command_node);
+			if (curr_command_node->builtin == false)
+				resources.curr_exit_status = run_executable(curr_command_node->argv, &resources);
+			else
+				resources.curr_exit_status = manage_builtin(curr_command_node, &resources);
 		}
 		
 		// // This will be in run_executable()
@@ -119,12 +91,13 @@ int	main(int ac, char *av[], char *envp[])
 		// else
 		// 	waitpid(pid, NULL, 0); // Change this so that it gets the return status
 		//
-		free(user_input);
-		free_cmds(command_list);
+		free(resources.user_input);
+		free_cmds(resources.command_list);
 	}
-	free_str_arr(local_envp);
-	if (ft_strncmp(prompt, "42_minishell: ", 15) != 0)
-		free(prompt);
+	free_str_arr(resources.local_envp);
+	if (ft_strncmp(resources.prompt, "42_minishell: ", 15) != 0)
+		free(resources.prompt);
+	// close fds
 	rl_clear_history();
 	return (0);
 }
