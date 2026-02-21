@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 19:38:36 by hudescam          #+#    #+#             */
-/*   Updated: 2026/02/20 18:22:20 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/21 11:39:25 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,18 @@ typedef struct s_token
 	struct s_token	*next;
 }	t_token;
 
+typedef enum e_builtin
+{
+	BUILTIN_NONE,
+	BUILTIN_ECHO,
+	BUILTIN_CD,
+	BUILTIN_PWD,
+	BUILTIN_EXPORT,
+	BUILTIN_UNSET,
+	BUILTIN_ENV,
+	BUILTIN_EXIT
+}	t_builtin;
+
 typedef enum e_redir_type
 {
 	REDIR_IN,
@@ -57,7 +69,7 @@ typedef struct s_cmd
 {
 	char			**argv;
 	t_redir			*redirs;
-	int				is_builtin;
+	t_builtin		builtin;
 	struct s_cmd	*next;
 }	t_cmd;
 

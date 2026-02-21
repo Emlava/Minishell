@@ -6,11 +6,32 @@
 /*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 10:08:00 by hudescam          #+#    #+#             */
-/*   Updated: 2026/02/20 13:19:11 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/02/21 11:44:18 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing.h"
+
+static t_builtin	get_builtin_type(char *cmd)
+{
+	if (!cmd)
+		return (BUILTIN_NONE);
+	if (!ft_strcmp(cmd, "echo"))
+		return (BUILTIN_ECHO);
+	if (!ft_strcmp(cmd, "cd"))
+		return (BUILTIN_CD);
+	if (!ft_strcmp(cmd, "pwd"))
+		return (BUILTIN_PWD);
+	if (!ft_strcmp(cmd, "export"))
+		return (BUILTIN_EXPORT);
+	if (!ft_strcmp(cmd, "unset"))
+		return (BUILTIN_UNSET);
+	if (!ft_strcmp(cmd, "env"))
+		return (BUILTIN_ENV);
+	if (!ft_strcmp(cmd, "exit"))
+		return (BUILTIN_EXIT);
+	return (BUILTIN_NONE);
+}
 
 static t_cmd	*cmd_new(void)
 {
@@ -21,7 +42,7 @@ static t_cmd	*cmd_new(void)
 		return (NULL);
 	cmd->argv = NULL;
 	cmd->redirs = NULL;
-	cmd->is_builtin = 0;
+	cmd->builtin = BUILTIN_NONE;
 	cmd->next = NULL;
 	return (cmd);
 }
@@ -89,7 +110,11 @@ t_cmd	*parse_tokens(t_token *tokens)
 	while (tokens)
 	{
 		if (tokens->type == TOKEN_WORD)
+		{
 			add_arg(current, tokens->value);
+			if (!current->argv[1])
+				current->builtin = get_builtin_type(current->argv[0]);
+		}
 		else if (tokens->type == TOKEN_PIPE)
 		{
 			current->next = cmd_new();
