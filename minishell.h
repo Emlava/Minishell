@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 11:22:59 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/20 11:39:01 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/23 13:39:00 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,5 +14,7 @@
 # define MINISHELL_H
 #include "execution/execution.h"
 #include "parsing/parsing.h"
+
+extern int	g_exit_status;
 
 #endif

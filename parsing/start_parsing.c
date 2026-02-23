@@ -6,13 +6,11 @@
 /*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 16:25:10 by hudescam          #+#    #+#             */
-/*   Updated: 2026/02/20 13:26:07 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/02/23 13:38:44 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing.h"
-
-int	g_exit_status = 0;
 
 // static void print_tokens(t_token *t)
 // {

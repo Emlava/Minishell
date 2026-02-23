@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/21 23:21:40 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/23 13:53:06 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	g_exit_status = 0;
 
 char	**duplicate_environment(char *envp[])
 {
@@ -44,6 +46,7 @@ int	main(int ac, char *av[], char *envp[])
 	t_resources	resources;
 	t_cmd		*curr_command_node;
 	
+	init_signals();
 	if (ac > 1)
 	{
 		ft_dprintf(2, "No arguments should be given at program startup.\n");
@@ -62,6 +65,14 @@ int	main(int ac, char *av[], char *envp[])
 			resources.user_input = readline(resources.prompt); // free
 		else
 			resources.user_input = readline("42_minishell: ");
+
+		//this is what check the exit if ctrl+D is pressed at any point
+		if (!resources.user_input)
+    	{
+        	ft_printf("exit\n");
+        	break;
+    	}
+		
 		add_history(resources.user_input);
 		resources.command_list = start_parsing(resources.user_input);
 		curr_command_node = resources.command_list;
