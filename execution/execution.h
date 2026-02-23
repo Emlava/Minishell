@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/21 22:35:26 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/23 20:43:40 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,11 @@
 
 typedef struct s_prompt_resources
 {
-	char	**envp;
-	char	*user;
-	char	*host_or_computer;
-	char	*working_dir;
-	char	*tmp;
-	bool	curr_computer_present;
-}	t_prompt;
+	char	*permanent_prompt_substr;
+	bool	free_permanent_substr;
+	char	*home;
+	size_t	home_len;
+}	t_prompt_resources;
 
 typedef struct s_resources
 {
@@ -49,10 +47,10 @@ char	*get_local_env(char **local_envp, char *name);
 void	define_prompt(char **prompt, char **local_envp);
 
 // **** prompt_management/manage_prompt_utils.c **** //
-int		determine_second_field(t_prompt *prompt_resources, bool *hostname_present);
-void	format_working_dir(t_prompt *prompt_resources, bool hostname_present);
-void	free_and_null_tmp(t_prompt *prompt_resources);
-void	free_prompt_resources(t_prompt *prompt_resources, int instance);
+// int		determine_second_field(t_prompt *prompt_resources, bool *hostname_present);
+// void	format_working_dir(t_prompt *prompt_resources, bool hostname_present);
+// void	free_and_null_tmp(t_prompt *prompt_resources);
+// void	free_prompt_resources(t_prompt *prompt_resources, int instance);
 
 // **** builtins.c **** //
 int		manage_builtin(t_cmd *command, t_resources *resources);
