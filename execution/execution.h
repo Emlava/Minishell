@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/23 20:43:40 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/24 20:31:22 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,18 +33,28 @@ typedef struct s_prompt_resources
 	size_t	home_len;
 }	t_prompt_resources;
 
-typedef struct s_resources
+typedef struct s_exec_resources
 {
 	char			**local_envp;
+	bool			pwd_present;
+	bool			oldpwd_present;
+	bool			last_command_present;
 	char			*prompt;
 	char			*user_input;
 	t_cmd			*command_list;
 	unsigned char	curr_exit_status;
-}	t_resources;
+}	t_exec_resources;
 
 // **** prompt_management/manage_prompt.c **** //
 char	*get_local_env(char **local_envp, char *name);
-void	define_prompt(char **prompt, char **local_envp);
+void	check_essential_env_vars(t_exec_resources *exec_resources);
+void	define_prompt(char **prompt, t_prompt_resources *prompt_resources, char **envp);
+int		update_local_env_last_command(char **local_envp);
+int		update_local_env_paths(char **local_envp);
+
+// **** env_management/env_utils.c **** //
+char	**duplicate_environment(char *envp[]);
+char	*get_local_env(char **local_envp, char *name);
 
 // **** prompt_management/manage_prompt_utils.c **** //
 // int		determine_second_field(t_prompt *prompt_resources, bool *hostname_present);
@@ -53,10 +63,9 @@ void	define_prompt(char **prompt, char **local_envp);
 // void	free_prompt_resources(t_prompt *prompt_resources, int instance);
 
 // **** builtins.c **** //
-int		manage_builtin(t_cmd *command, t_resources *resources);
+int		manage_builtin(t_cmd *command, t_exec_resources *exec_resources, t_prompt_resources *prompt_resources);
 
 // **** builtins_utils.c **** //
-int		update_local_environment(char **local_envp);
-void	exit_cleanup(t_resources *resources);
+void	exit_cleanup(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:14:19 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/21 23:17:51 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/24 20:04:49 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,30 +37,30 @@ int	ft_echo(char **argv)
 	return (0);
 }
 
-// int	ft_cd(char **argv, t_resources *resources)
-// {
-// 	char	*err_str;
+int	ft_cd(char **argv, t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
+{
+	char	*err_str;
 
-// 	if (argv[2] != NULL)
-// 	{
-// 		ft_dprintf(2, "minishell: cd: too many arguments\n");
-// 		return (1);
-// 	}
-// 	if (chdir(argv[1]) == -1)
-// 	{
-// 		err_str = ft_strjoin("minishell: cd: ", argv[1]); // free
-// 		if (err_str != NULL)
-// 		{
-// 			perror(err_str);
-// 			free(err_str);
-// 		}
-// 		return (2);
-// 	}
-// 	update_local_environment(resources->local_envp);
-// 	if (resources->prompt != NULL)
-// 		define_prompt(&resources->prompt, resources->local_envp);
-// 	return (0);
-// }
+	if (argv[2] != NULL)
+	{
+		ft_dprintf(2, "minishell: cd: too many arguments\n");
+		return (1);
+	}
+	if (chdir(argv[1]) == -1)
+	{
+		err_str = ft_strjoin("minishell: cd: ", argv[1]); // free
+		if (err_str != NULL)
+		{
+			perror(err_str);
+			free(err_str);
+		}
+		return (2);
+	}
+	// update_local_environment(exec_resources->local_envp);
+	if (exec_resources->prompt != NULL)
+		define_prompt(&exec_resources->prompt, prompt_resources, exec_resources->local_envp);
+	return (0);
+}
 
 int	ft_pwd(char **argv)
 {
@@ -101,7 +101,7 @@ int	ft_pwd(char **argv)
 // 	}
 // }
 
-int	ft_exit(char **argv, t_resources *resources)
+int	ft_exit(char **argv, t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
 {
 	unsigned char	exit_status;
 
@@ -123,17 +123,17 @@ int	ft_exit(char **argv, t_resources *resources)
 			exit_status = (unsigned char)ft_atoi(argv[1]);
 	}
 	else
-		exit_status = resources->curr_exit_status;
-	exit_cleanup(resources);
+		exit_status = exec_resources->curr_exit_status;
+	exit_cleanup(exec_resources, prompt_resources);
 	exit(exit_status);
 }
 
-int	manage_builtin(t_cmd *command, t_resources *resources)
+int	manage_builtin(t_cmd *command, t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
 {
 	if (command->builtin == BUILTIN_ECHO)
 		return (ft_echo(command->argv));
 	// if (command->builtin == BUILTIN_CD)
-	// 	return (ft_cd(command->argv, resources));
+	// 	return (ft_cd(command->argv, exec_resources));
 	if (command->builtin == BUILTIN_PWD)
 		return (ft_pwd(command->argv));
 	// if (command->builtin == BUILTIN_EXPORT)
@@ -143,7 +143,7 @@ int	manage_builtin(t_cmd *command, t_resources *resources)
 	// if (command->builtin == BUILTIN_ENV)
 	// 	return (ft_env(command->argv));
 	else
-		return (ft_exit(command->argv, resources));
+		return (ft_exit(command->argv, exec_resources, prompt_resources));
 }
 
 // Things to free or close:

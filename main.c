@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/23 13:53:06 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/02/24 20:23:19 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,37 +14,11 @@
 
 int	g_exit_status = 0;
 
-char	**duplicate_environment(char *envp[])
-{
-	int		env_var_count;
-	int		i;
-	char	**env_duplicate;
-
-	env_var_count = 0;
-	while (envp[env_var_count] != NULL)
-		env_var_count++;
-	env_duplicate = malloc(sizeof(char*) * (env_var_count + 1)); // free
-	if (env_duplicate == NULL)
-		return (NULL);
-	i = 0;
-	while (i < env_var_count)
-	{
-		env_duplicate[i] = ft_strdup(envp[i]); // free each
-		if (env_duplicate[i] == NULL)
-		{
-			free_str_arr(env_duplicate);
-			return (NULL);
-		}
-		i++;
-	}
-	env_duplicate[i] = NULL;
-	return (env_duplicate);
-}
-
 int	main(int ac, char *av[], char *envp[])
 {
-	t_resources	resources;
-	t_cmd		*curr_command_node;
+	t_prompt_resources	prompt_resources;
+	t_exec_resources	exec_resources;
+	t_cmd				*curr_command_node;
 	
 	init_signals();
 	if (ac > 1)
@@ -52,41 +26,42 @@ int	main(int ac, char *av[], char *envp[])
 		ft_dprintf(2, "No arguments should be given at program startup.\n");
 		return (1);
 	}
-	resources.local_envp = duplicate_environment(envp); // free
-	if (resources.local_envp == NULL)
-		return (2);
 	(void)av;
-	resources.prompt = NULL;
-	define_prompt(&resources.prompt, resources.local_envp);
-	resources.curr_exit_status = 0;
+	exec_resources.local_envp = duplicate_environment(envp); // free
+	if (exec_resources.local_envp == NULL)
+		return (2);
+	check_essential_env_vars(&exec_resources);
+	exec_resources.prompt = NULL;
+	define_prompt(&exec_resources.prompt, &prompt_resources, exec_resources.local_envp);
+	exec_resources.curr_exit_status = 0;
 	while (1)
 	{
-		if (resources.prompt != NULL)
-			resources.user_input = readline(resources.prompt); // free
+		if (exec_resources.prompt != NULL)
+			exec_resources.user_input = readline(exec_resources.prompt); // free
 		else
-			resources.user_input = readline("42_minishell: ");
+			exec_resources.user_input = readline("42_minishell: ");
 
 		//this is what check the exit if ctrl+D is pressed at any point
-		if (!resources.user_input)
+		if (!exec_resources.user_input)
     	{
         	ft_printf("exit\n");
         	break;
     	}
 		
-		add_history(resources.user_input);
-		resources.command_list = start_parsing(resources.user_input);
-		curr_command_node = resources.command_list;
+		add_history(exec_resources.user_input);
+		exec_resources.command_list = start_parsing(exec_resources.user_input);
+		curr_command_node = exec_resources.command_list;
 
 		while (curr_command_node != NULL)
 		{
 			//
-			// define_prompt(&resources.prompt, resources.local_envp);
+			// define_prompt(&exec_resources.prompt, exec_resources.local_envp);
 			//
 			// manage_piping_and_redirection(curr_command_node);
 			if (curr_command_node->builtin)
-				resources.curr_exit_status = manage_builtin(curr_command_node, &resources);
+				exec_resources.curr_exit_status = manage_builtin(curr_command_node, &exec_resources, &prompt_resources);
 			// else
-			// 	resources.curr_exit_status = run_executable(curr_command_node->argv, &resources);
+			// 	exec_resources.curr_exit_status = run_executable(curr_command_node->argv, &exec_resources);
 			curr_command_node = curr_command_node->next;
 		}
 		
@@ -110,18 +85,18 @@ int	main(int ac, char *av[], char *envp[])
 		// else
 		// 	waitpid(pid, NULL, 0); // Change this so that it gets the return status
 		//
-		free(resources.user_input);
-		free_cmds(resources.command_list);
+		free(exec_resources.user_input);
+		free_cmds(exec_resources.command_list);
 	}
-	free_str_arr(resources.local_envp);
-	if (resources.prompt != NULL)
-		free(resources.prompt);
+	free_str_arr(exec_resources.local_envp);
+	if (exec_resources.prompt != NULL)
+		free(exec_resources.prompt);
 	// close fds
 	rl_clear_history();
 	return (0);
 }
 
-// Resources to free or clear:
+// exec_resources to free or clear:
 //
 // -local_envp and each *local_envp, managed
 // -user_input, managed

@@ -6,24 +6,23 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 14:18:15 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/21 22:43:14 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/24 19:34:23 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-// int	update_local_environment(char **local_envp)
-// {
-	
-// }
-
-void	exit_cleanup(t_resources *resources)
+void	exit_cleanup(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
 {
-	free(resources->user_input);
-	free_cmds(resources->command_list);
-	free_str_arr(resources->local_envp);
-	if (resources->prompt != NULL)
-		free(resources->prompt);
+	free(exec_resources->user_input);
+	free_cmds(exec_resources->command_list);
+	free_str_arr(exec_resources->local_envp);
+	if (exec_resources->prompt != NULL)
+	{
+		free(exec_resources->prompt);
+		if (prompt_resources->free_permanent_substr == true)
+			free(prompt_resources->permanent_prompt_substr);
+	}
 	rl_clear_history();
 	// if piping or redirections: close fds
 	return ;
