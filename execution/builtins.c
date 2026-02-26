@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:14:19 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/24 20:04:49 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/26 13:31:05 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,13 @@ int	ft_cd(char **argv, t_exec_resources *exec_resources, t_prompt_resources *pro
 {
 	char	*err_str;
 
-	if (argv[2] != NULL)
+	if (argv[1] != NULL && argv[2] != NULL)
 	{
 		ft_dprintf(2, "minishell: cd: too many arguments\n");
 		return (1);
 	}
+	if (argv[1] == NULL)
+		argv[1] = ft_strdup(prompt_resources->home); // Should be freed by free_cmds()
 	if (chdir(argv[1]) == -1)
 	{
 		err_str = ft_strjoin("minishell: cd: ", argv[1]); // free
@@ -56,13 +58,14 @@ int	ft_cd(char **argv, t_exec_resources *exec_resources, t_prompt_resources *pro
 		}
 		return (2);
 	}
-	// update_local_environment(exec_resources->local_envp);
+	if (exec_resources->pwd_present == true)
+		update_local_env_paths(exec_resources);
 	if (exec_resources->prompt != NULL)
 		define_prompt(&exec_resources->prompt, prompt_resources, exec_resources->local_envp);
 	return (0);
 }
 
-int	ft_pwd(char **argv)
+int	ft_pwd(char **argv, char **local_envp)
 {
 	char	*working_dir;
 
@@ -71,11 +74,10 @@ int	ft_pwd(char **argv)
 		ft_dprintf(2, "minishell: pwd: no options for this builtin\n");
 		return (1);
 	}
-	working_dir = getcwd(NULL, 0); // free
+	working_dir = get_local_env(local_envp, "PWD");
 	if (working_dir == NULL)
 		return (2);
 	printf("%s\n", working_dir);
-	free(working_dir);
 	return (0);
 }
 
@@ -132,10 +134,10 @@ int	manage_builtin(t_cmd *command, t_exec_resources *exec_resources, t_prompt_re
 {
 	if (command->builtin == BUILTIN_ECHO)
 		return (ft_echo(command->argv));
-	// if (command->builtin == BUILTIN_CD)
-	// 	return (ft_cd(command->argv, exec_resources));
+	if (command->builtin == BUILTIN_CD)
+		return (ft_cd(command->argv, exec_resources, prompt_resources));
 	if (command->builtin == BUILTIN_PWD)
-		return (ft_pwd(command->argv));
+		return (ft_pwd(command->argv, exec_resources->local_envp));
 	// if (command->builtin == BUILTIN_EXPORT)
 	// 	return (ft_export(command->argv));
 	// if (command->builtin == BUILTIN_UNSET)

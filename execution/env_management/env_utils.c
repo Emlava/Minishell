@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 18:13:02 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/24 20:32:51 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/26 13:26:13 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,51 @@ char	**duplicate_environment(char *envp[])
 	return (env_duplicate);
 }
 
+void	check_essential_env_vars(t_exec_resources *exec_resources)
+{
+	if (get_local_env(exec_resources->local_envp, "PWD") == NULL)
+		exec_resources->pwd_present = false;
+	else
+		exec_resources->pwd_present = true;
+	if (get_local_env(exec_resources->local_envp, "OLDPWD") == NULL)
+		exec_resources->oldpwd_present = false;
+	else
+		exec_resources->oldpwd_present = true;
+	if (get_local_env(exec_resources->local_envp, "_") == NULL)
+		exec_resources->last_command_present = false;
+	else
+		exec_resources->last_command_present = true;
+	return ;
+}
+
+void	get_var_indexes(t_exec_resources *exec_resources)
+{
+	int	i;
+
+	if (exec_resources->pwd_present == true)
+	{
+		i = 0;
+		while (ft_strncmp(exec_resources->local_envp[i], "PWD=", 4))
+			i++;
+		exec_resources->pwd_index = i;
+	}
+	if (exec_resources->oldpwd_present == true)
+	{
+		i = 0;
+		while (ft_strncmp(exec_resources->local_envp[i], "OLDPWD=", 7))
+			i++;
+		exec_resources->oldpwd_index = i;
+	}
+	if (exec_resources->last_command_present == true)
+	{
+		i = 0;
+		while (ft_strncmp(exec_resources->local_envp[i], "_=", 2))
+			i++;
+		exec_resources->last_command_index = i;
+	}
+	return ;
+}
+
 char	*get_local_env(char **local_envp, char *name)
 {
 	char	*formatted_name;
@@ -59,38 +104,29 @@ char	*get_local_env(char **local_envp, char *name)
 	return (local_envp[i] + formatted_name_len);
 }
 
-void	check_essential_env_vars(t_exec_resources *exec_resources)
-{
-	if (get_local_env(exec_resources->local_envp, "PWD") == NULL)
-		exec_resources->pwd_present = false;
-	else
-		exec_resources->pwd_present = true;
-	if (get_local_env(exec_resources->local_envp, "OLDPWD") == NULL)
-		exec_resources->oldpwd_present = false;
-	else
-		exec_resources->oldpwd_present = true;
-	if (get_local_env(exec_resources->local_envp, "_") == NULL)
-		exec_resources->last_command_present = false;
-	else
-		exec_resources->last_command_present = true;
-	return ;
-}
-
-int	update_local_env_last_command(char **local_envp)
-{
-	char	*curr_last_command;
-
-	curr_last_command = getenv("_");
-}
-
-int	update_local_env_paths(char **local_envp)
+void	update_local_env_paths(t_exec_resources *exec_resources)
 {
 	char	*curr_pwd;
 	char	*curr_oldpwd;
-	int		i;
 
-	curr_pwd = getenv("PWD");
-	curr_oldpwd = getenv("OLDPWD");
-	i = ft_strlen(curr_pwd); // WE LEFT OFF HERE! Check what to do with the *_present flags.
-	// What happens if suddenly getenv() returns NULL?
+	free(exec_resources->local_envp[exec_resources->pwd_index]);
+	curr_pwd = getenv("PWD"); // Modify this
+	exec_resources->local_envp[exec_resources->pwd_index] = ft_strjoin("PWD=", curr_pwd); // This is freed when freeing local_envp	
+	if (exec_resources->oldpwd_present == true)
+	{
+		free(exec_resources->local_envp[exec_resources->oldpwd_index]);
+		curr_oldpwd = getenv("OLDPWD"); // Modify this
+		exec_resources->local_envp[exec_resources->oldpwd_index] = ft_strjoin("OLDPWD=", curr_oldpwd); // This is freed when freeing local_envp	
+	}
+	return ;
+}
+
+void	update_local_env_last_command(t_exec_resources *exec_resources)
+{
+	char	*curr_last_command;
+
+	free(exec_resources->local_envp[exec_resources->last_command_index]);
+	curr_last_command = getenv("_"); // Modify this
+	exec_resources->local_envp[exec_resources->last_command_index] = ft_strjoin("_=", curr_last_command); // This is freed when freeing local_envp	
+	return ;
 }

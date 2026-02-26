@@ -6,11 +6,16 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 14:18:15 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/24 19:34:23 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/26 13:51:22 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+void	define_non_reiterative_path(char **argv)
+{
+
+}
 
 void	exit_cleanup(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
 {
