@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:14:19 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/27 17:29:47 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/27 20:02:06 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	ft_cd(char **argv, t_exec_resources *exec_resources, t_prompt_resources *pro
 {
 	char	*err_str;
 
-	if (strncmp(argv[1], ".", 2) == 0)
+	if (argv[1] != NULL && strncmp(argv[1], ".", 2) == 0)
 		return (0);
 	if (argv[1] != NULL && argv[2] != NULL)
 	{

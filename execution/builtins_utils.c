@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 14:18:15 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/27 18:06:59 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/27 20:21:12 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,16 @@ static char *put_final_path_together(char **fields, int fields_count)
 	return (path);
 }
 
+static void	free_fields(char **fields, int fields_count)
+{
+	while (--fields_count >= 0)
+	{
+		if (fields[fields_count] != NULL)
+			free(fields[fields_count]);
+	}
+	free(fields);
+}
+
 static void	manage_absolute_path(char **argv, char **fields)
 {
 	int			fields_count;
@@ -92,61 +102,67 @@ static void	manage_absolute_path(char **argv, char **fields)
 
 	curr_field = 0;
 	argv[1] = put_final_path_together(fields, fields_count);
+	free_fields(fields, fields_count);
 	return ;
 }
 
-static char	**manage_realtive_path(char **argv, char *pwd, char **fields)
-{
-	int		fields_count;
-	char	*tmp_str;
+// static char	**manage_realtive_path(char **argv, char *pwd, char **fields)
+// {
 
-	free(argv[1]);
-	fields_count = 0;
-	while (fields[fields_count] != NULL)
-		fields_count++;
+// }
+
+static void	manage_tilde(char **argv, char *home)
+{
+	char	*tmp_str;
+	
+	tmp_str = argv[1];
+	argv[1] = ft_strjoin(home, argv[1] + 1);
+	free(tmp_str);
+	return ;
 }
 
 void	define_non_reiterative_path(char **argv, t_exec_resources *exec_resources,
 	char *home)
 {
 	char	**fields;
-	char	*pwd;
+	// char	*pwd;
 
+	//
+	if (exec_resources->oldpwd_present == false)
+		printf("");
+	//
 	if (argv[1] == NULL)
 	{
+		// THE FUCKING BUG IS HERE: If argv[1] stops being the sentinel,
+		// we are going to try to access non-allocated memory
 		argv[1] = ft_strdup(home); // Should be freed by free_cmds()
 		return ;
 	}
 	if (ft_strncmp(argv[1], "/", 2) == 0)
 		return ;
+	if (ft_strncmp(argv[1], "~/", 2) == 0)
+	{
+		manage_tilde(argv, home);
+		if (argv[1] == NULL)
+			return ;
+	}
 	fields = ft_split(argv[1], '/'); // free with special method in manage_*_path()
 	if (fields == NULL)
 	{
 		free(argv[1]);
-		argv[1] == NULL;
+		argv[1] = NULL;
 		return ;
-	}
-	if (ft_strncmp(fields[0], "~", 2) == 0)
-	{
-		free(fields[0]);
-		fields[0] = ft_strdup(home); // free
-		if (fields[0] == NULL)
-		{
-			free(argv[1]);
-			argv[1] == NULL;
-			return ;
-		}
 	}
 	if (argv[1][0] == '/')
 		manage_absolute_path(argv, fields);
-	else
-	{
-		if (exec_resources->pwd_present == true)
-			pwd = exec_resources->local_envp[exec_resources->pwd_index];
-		else
-			pwd = NULL;
-		manage_realtive_path(argv, pwd, fields);
-	}
+	// else
+	// {
+	// 	if (exec_resources->pwd_present == true)
+	// 		pwd = exec_resources->local_envp[exec_resources->pwd_index];
+	// 	else
+	// 		pwd = NULL;
+	// 	manage_realtive_path(argv, pwd, fields);
+	// }
 	return ;
 }
 
@@ -154,7 +170,7 @@ void	exit_cleanup(t_exec_resources *exec_resources, t_prompt_resources *prompt_r
 {
 	free(exec_resources->user_input);
 	free_cmds(exec_resources->command_list);
-	free_str_arr(exec_resources->local_envp);
+	ft_free_str_arr(exec_resources->local_envp);
 	if (exec_resources->prompt != NULL)
 	{
 		free(exec_resources->prompt);

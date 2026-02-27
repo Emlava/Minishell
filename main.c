@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/27 14:17:58 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/27 20:13:55 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,12 +56,12 @@ int	main(int ac, char *av[], char *envp[])
 		while (curr_command_node != NULL)
 		{
 			// manage_piping_and_redirection(curr_command_node);
-			if (curr_command_node->builtin)
-				exec_resources.curr_exit_status = manage_builtin(curr_command_node, &exec_resources, &prompt_resources);
+			// if (curr_command_node->builtin)
+			// 	exec_resources.curr_exit_status = manage_builtin(curr_command_node, &exec_resources, &prompt_resources);	
 			// else
 			// 	exec_resources.curr_exit_status = run_executable(curr_command_node->argv, &exec_resources);
-			if (exec_resources.last_command_present == true)
-				update_local_env_last_command(&exec_resources, curr_command_node->argv[0]); // Make sure
+			// if (exec_resources.last_command_present == true)
+			// 	update_local_env_last_command(&exec_resources, curr_command_node->argv[0]); // Make sure
 			// That the first index is always a command and never a redirection
 			curr_command_node = curr_command_node->next;
 		}
@@ -86,6 +86,25 @@ int	main(int ac, char *av[], char *envp[])
 		// else
 		// 	waitpid(pid, NULL, 0); // Change this so that it gets the return status
 		//
+
+		//
+		// if (exec_resources.command_list->argv[0])
+		// {
+		// 	printf("argv[0] is not NULL\n");
+		// 	printf("%s\n", exec_resources.command_list->argv[0]);
+		// }
+		// if (exec_resources.command_list->argv[1])
+		// {
+		// 	printf("argv[1] is not NULL\n");
+		// 	printf("%s\n", exec_resources.command_list->argv[1]);
+		// }
+		// if (exec_resources.command_list->argv[2] != NULL)
+		// {
+		// 	printf("argv[2] is not NULL\n");
+		// 	printf("%s\n", exec_resources.command_list->argv[2]);
+		// }
+		//
+		
 		free(exec_resources.user_input);
 		free_cmds(exec_resources.command_list);
 	}

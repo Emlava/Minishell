@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 18:13:02 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/27 14:06:10 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/27 18:27:51 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ char	**duplicate_environment(char *envp[])
 		env_duplicate[i] = ft_strdup(envp[i]); // free each
 		if (env_duplicate[i] == NULL)
 		{
-			free_str_arr(env_duplicate);
+			ft_free_str_arr(env_duplicate);
 			return (NULL);
 		}
 		i++;
