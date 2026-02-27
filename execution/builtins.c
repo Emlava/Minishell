@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:14:19 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/26 13:31:05 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/27 17:29:47 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,13 +41,19 @@ int	ft_cd(char **argv, t_exec_resources *exec_resources, t_prompt_resources *pro
 {
 	char	*err_str;
 
+	if (strncmp(argv[1], ".", 2) == 0)
+		return (0);
 	if (argv[1] != NULL && argv[2] != NULL)
 	{
 		ft_dprintf(2, "minishell: cd: too many arguments\n");
 		return (1);
 	}
+	define_non_reiterative_path(argv, exec_resources, prompt_resources->home);
 	if (argv[1] == NULL)
-		argv[1] = ft_strdup(prompt_resources->home); // Should be freed by free_cmds()
+	{
+		ft_dprintf(2, "minishell: cd: failed to manage path because of a malloc failure\n");
+		return (2);
+	}
 	if (chdir(argv[1]) == -1)
 	{
 		err_str = ft_strjoin("minishell: cd: ", argv[1]); // free
@@ -56,10 +62,10 @@ int	ft_cd(char **argv, t_exec_resources *exec_resources, t_prompt_resources *pro
 			perror(err_str);
 			free(err_str);
 		}
-		return (2);
+		return (3);
 	}
 	if (exec_resources->pwd_present == true)
-		update_local_env_paths(exec_resources);
+		update_local_env_paths(exec_resources, argv[1]);
 	if (exec_resources->prompt != NULL)
 		define_prompt(&exec_resources->prompt, prompt_resources, exec_resources->local_envp);
 	return (0);

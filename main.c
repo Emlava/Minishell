@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/26 13:39:47 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/27 14:17:58 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,6 @@ int	main(int ac, char *av[], char *envp[])
 		add_history(exec_resources.user_input);
 		exec_resources.command_list = start_parsing(exec_resources.user_input);
 		curr_command_node = exec_resources.command_list;
-		//
-		printf("%s\n", curr_command_node->argv[1]);
-		//
 
 		while (curr_command_node != NULL)
 		{
@@ -64,7 +61,8 @@ int	main(int ac, char *av[], char *envp[])
 			// else
 			// 	exec_resources.curr_exit_status = run_executable(curr_command_node->argv, &exec_resources);
 			if (exec_resources.last_command_present == true)
-				update_local_env_last_command(&exec_resources);
+				update_local_env_last_command(&exec_resources, curr_command_node->argv[0]); // Make sure
+			// That the first index is always a command and never a redirection
 			curr_command_node = curr_command_node->next;
 		}
 		

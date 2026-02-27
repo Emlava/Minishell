@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 18:13:02 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/26 13:26:13 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/27 14:06:10 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,29 +104,22 @@ char	*get_local_env(char **local_envp, char *name)
 	return (local_envp[i] + formatted_name_len);
 }
 
-void	update_local_env_paths(t_exec_resources *exec_resources)
+void	update_local_env_paths(t_exec_resources *exec_resources, char *new_pwd)
 {
-	char	*curr_pwd;
-	char	*curr_oldpwd;
-
-	free(exec_resources->local_envp[exec_resources->pwd_index]);
-	curr_pwd = getenv("PWD"); // Modify this
-	exec_resources->local_envp[exec_resources->pwd_index] = ft_strjoin("PWD=", curr_pwd); // This is freed when freeing local_envp	
 	if (exec_resources->oldpwd_present == true)
 	{
 		free(exec_resources->local_envp[exec_resources->oldpwd_index]);
-		curr_oldpwd = getenv("OLDPWD"); // Modify this
-		exec_resources->local_envp[exec_resources->oldpwd_index] = ft_strjoin("OLDPWD=", curr_oldpwd); // This is freed when freeing local_envp	
+		exec_resources->local_envp[exec_resources->oldpwd_index]
+			= ft_strdup(exec_resources->local_envp[exec_resources->pwd_index]); // This is freed when freeing local_envp	
 	}
+	free(exec_resources->local_envp[exec_resources->pwd_index]);
+	exec_resources->local_envp[exec_resources->pwd_index] = ft_strjoin("PWD=", new_pwd); // This is freed when freeing local_envp	
 	return ;
 }
 
-void	update_local_env_last_command(t_exec_resources *exec_resources)
+void	update_local_env_last_command(t_exec_resources *exec_resources, char *last_command)
 {
-	char	*curr_last_command;
-
 	free(exec_resources->local_envp[exec_resources->last_command_index]);
-	curr_last_command = getenv("_"); // Modify this
-	exec_resources->local_envp[exec_resources->last_command_index] = ft_strjoin("_=", curr_last_command); // This is freed when freeing local_envp	
+	exec_resources->local_envp[exec_resources->last_command_index] = ft_strjoin("_=", last_command); // This is freed when freeing local_envp	
 	return ;
 }

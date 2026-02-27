@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/26 13:51:33 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/27 15:53:59 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,13 @@ typedef struct s_exec_resources
 	unsigned char	curr_exit_status;
 }	t_exec_resources;
 
+typedef struct s_dir_list
+{
+	char				*directory;
+	struct s_dir_list	*next;
+	struct s_dir_list	*prev;
+}	t_dir_list;
+
 // **** prompt_management/manage_prompt.c **** //
 void	define_prompt(char **prompt, t_prompt_resources *prompt_resources, char **envp);
 
@@ -56,8 +63,8 @@ char	**duplicate_environment(char *envp[]);
 void	check_essential_env_vars(t_exec_resources *exec_resources);
 void	get_var_indexes(t_exec_resources *exec_resources);
 char	*get_local_env(char **local_envp, char *name);
-void	update_local_env_paths(t_exec_resources *exec_resources);
-void	update_local_env_last_command(t_exec_resources *exec_resources);
+void	update_local_env_paths(t_exec_resources *exec_resources, char *new_pwd);
+void	update_local_env_last_command(t_exec_resources *exec_resources, char *last_command);
 
 // **** prompt_management/manage_prompt_utils.c **** //
 // int		determine_second_field(t_prompt *prompt_resources, bool *hostname_present);
@@ -69,7 +76,9 @@ void	update_local_env_last_command(t_exec_resources *exec_resources);
 int		manage_builtin(t_cmd *command, t_exec_resources *exec_resources, t_prompt_resources *prompt_resources);
 
 // **** builtins_utils.c **** //
-void	define_non_reiterative_path(char **argv);
-void	exit_cleanup(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources);
+void	define_non_reiterative_path(char **argv, t_exec_resources *exec_resources,
+			char *home);
+void	exit_cleanup(t_exec_resources *exec_resources,
+			t_prompt_resources *prompt_resources);
 
 #endif
