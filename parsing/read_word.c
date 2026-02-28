@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   read_word.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
+/*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 10:40:42 by hudescam          #+#    #+#             */
-/*   Updated: 2026/02/16 17:54:13 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/02/28 02:38:39 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing.h"
 
-static char	*append_plain(char *word, char *line, int *i)
+char	*append_plain(char *word, char *line, int *i)
 {
 	char	*tmp;
 	int		start;
@@ -30,7 +30,7 @@ static char	*append_plain(char *word, char *line, int *i)
 	return (ft_strjoin_free(word, tmp));
 }
 
-static char	*append_variable(char *word, char *line, int *i)
+char	*append_variable(char *word, char *line, int *i)
 {
 	char	*var;
 	char	*value;
@@ -58,7 +58,7 @@ static char	*append_variable(char *word, char *line, int *i)
 	return (ft_strjoin_free(word, value));
 }
 
-static char	*append_single_quoted(char *word, char *line, int *i)
+char	*append_single_quoted(char *word, char *line, int *i)
 {
 	char	*tmp;
 	int		start;
@@ -78,11 +78,10 @@ static char	*append_single_quoted(char *word, char *line, int *i)
 	return (word);
 }
 
-static char	*append_double_quoted(char *word, char *line, int *i)
+char	*append_double_quoted(char *word, char *line, int *i)
 {
 	char	*tmp;
 	int		start;
-	int		plain_start;
 
 	start = ++(*i);
 	while (line[*i] && line[*i] != '"')
@@ -94,19 +93,7 @@ static char	*append_double_quoted(char *word, char *line, int *i)
 		return (NULL);
 	}
 	tmp = ft_substr(line, start, *i - start);
-	start = 0;
-	while (tmp[start])
-	{
-		if (tmp[start] == '$')
-			word = append_variable(word, tmp, &start);
-		else
-		{
-			plain_start = start;
-			while (tmp[start] && tmp[start] != '$')
-				start++;
-			word = ft_strjoin_free(word, ft_substr(tmp, plain_start, start - plain_start));
-		}
-	}
+	word = process_double_content(word, tmp);
 	free(tmp);
 	(*i)++;
 	return (word);
@@ -117,28 +104,16 @@ char	*read_word(char *line, int *i, int *quoted)
 	char	*word;
 
 	word = ft_strdup("");
-	while (
-		line[*i]
+	while (line[*i]
 		&& !ft_isspace(line[*i])
 		&& line[*i] != '|'
 		&& line[*i] != '<'
-		&& line[*i] != '>'
-	)
+		&& line[*i] != '>')
 	{
-		if (line[*i] == '\'')
-		{
-			*quoted = 1;
-			word = append_single_quoted(word, line, i);
-		}
-		else if (line[*i] == '"')
-		{
-			*quoted = 1;
-			word = append_double_quoted(word, line, i);
-		}
-		else if (line[*i] == '$')
-			word = append_variable(word, line, i);
+		if (line[*i] == '\'' || line[*i] == '"')
+			word = handle_quote_case(word, line, i, quoted);
 		else
-			word = append_plain(word, line, i);
+			word = handle_word_char(word, line, i);
 	}
 	return (word);
 }

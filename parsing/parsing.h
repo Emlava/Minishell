@@ -6,7 +6,7 @@
 /*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 19:38:36 by hudescam          #+#    #+#             */
-/*   Updated: 2026/02/23 13:44:16 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/02/28 02:39:09 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,30 +75,47 @@ typedef struct s_cmd
 
 extern int	g_exit_status;
 
-char	*read_word(char *line, int *i, int *quoted);
-t_token	*token_new(t_token_type type, char *value);
-void	token_add_back(t_token **lst, t_token *new);
-t_token	*lexer(char *line);
+char			*read_word(char *line, int *i, int *quoted);
+t_token			*token_new(t_token_type type, char *value);
+void			token_add_back(t_token **lst, t_token *new);
+t_token			*lexer(char *line);
 
-int		is_operator(char c);
-void	handle_operator(char *line, int *i, t_token **tokens);
-void	handle_input_redir(char *line, int *i, t_token **tokens);
-void	handle_output_redir(char *line, int *i, t_token **tokens);
-int		handle_word(char *line, int *i, t_token **tokens);
+int				is_operator(char c);
+void			handle_operator(char *line, int *i, t_token **tokens);
+void			handle_input_redir(char *line, int *i, t_token **tokens);
+void			handle_output_redir(char *line, int *i, t_token **tokens);
+int				handle_word(char *line, int *i, t_token **tokens);
 
-int		ft_isspace(int c);
-char	*ft_strjoin_free(char *s1, char *s2);
-void	free_tokens(t_token *tokens);
-void	free_redirs(t_redir *redir);
-void	free_cmds(t_cmd *cmd);
+int				ft_isspace(int c);
+char			*ft_strjoin_free(char *s1, char *s2);
+void			free_tokens(t_token *tokens);
+void			free_redirs(t_redir *redir);
+void			free_cmds(t_cmd *cmd);
 
-t_cmd	*parse_tokens(t_token *tokens);
+t_redir_type	get_redir_type(t_token_type type);
+void			redir_add_back(t_redir **lst, t_redir *new);
+void			handle_token(t_cmd **current, t_token **tokens);
 
-int		check_syntax(t_token *tokens);
+t_builtin		get_builtin_type(char *cmd);
+t_cmd			*cmd_new(void);
+void			add_arg(t_cmd *cmd, char *value);
+void			add_redir(t_cmd *cmd, t_token *token);
+t_cmd			*parse_tokens(t_token *tokens);
 
-void	sigint_handler(int sig);
-void	init_signals(void);
+char			*process_double_content(char *word, char *tmp);
+char			*handle_quote_case(char *word, char *line, int *i, int *quoted);
+char			*handle_word_char(char *word, char *line, int *i);
 
-t_cmd	*start_parsing(char *line);
+char			*append_plain(char *word, char *line, int *i);
+char			*append_variable(char *word, char *line, int *i);
+char			*append_single_quoted(char *word, char *line, int *i);
+char			*append_double_quoted(char *word, char *line, int *i);
+
+int				check_syntax(t_token *tokens);
+
+void			sigint_handler(int sig);
+void			init_signals(void);
+
+t_cmd			*start_parsing(char *line);
 
 #endif
