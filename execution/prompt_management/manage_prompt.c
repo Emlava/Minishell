@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/22 16:24:14 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/27 14:01:07 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/28 18:20:05 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,14 +119,17 @@ void	define_prompt(char **prompt, t_prompt_resources *prompt_resources, char **e
 		}
 		prompt_resources->home_len = ft_strlen(prompt_resources->home);
 	}
+	else
+	{
+		free(*prompt);
+		*prompt = NULL;
+	}
 	get_working_dir(&working_dir, envp, prompt_resources);
 	if (working_dir == NULL)
 	{
 		if (prompt_resources->free_permanent_substr == true)
-		{
 			free(prompt_resources->permanent_prompt_substr);
-			prompt_resources->permanent_prompt_substr = NULL;
-		}
+		return ;
 	}
 	*prompt = ft_strjoin(prompt_resources->permanent_prompt_substr, working_dir); // free
 	free(working_dir);

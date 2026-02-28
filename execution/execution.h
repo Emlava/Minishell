@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/27 15:53:59 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/28 14:01:32 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	update_local_env_last_command(t_exec_resources *exec_resources, char *last_
 int		manage_builtin(t_cmd *command, t_exec_resources *exec_resources, t_prompt_resources *prompt_resources);
 
 // **** builtins_utils.c **** //
-void	define_non_reiterative_path(char **argv, t_exec_resources *exec_resources,
+char	*define_non_reiterative_path(char **argv, t_exec_resources *exec_resources,
 			char *home);
 void	exit_cleanup(t_exec_resources *exec_resources,
 			t_prompt_resources *prompt_resources);

@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 18:13:02 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/27 18:27:51 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/28 14:50:05 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ void	update_local_env_paths(t_exec_resources *exec_resources, char *new_pwd)
 	{
 		free(exec_resources->local_envp[exec_resources->oldpwd_index]);
 		exec_resources->local_envp[exec_resources->oldpwd_index]
-			= ft_strdup(exec_resources->local_envp[exec_resources->pwd_index]); // This is freed when freeing local_envp	
+			= ft_strjoin("OLDPWD=", exec_resources->local_envp[exec_resources->pwd_index] + 4); // This is freed when freeing local_envp	
 	}
 	free(exec_resources->local_envp[exec_resources->pwd_index]);
 	exec_resources->local_envp[exec_resources->pwd_index] = ft_strjoin("PWD=", new_pwd); // This is freed when freeing local_envp	
