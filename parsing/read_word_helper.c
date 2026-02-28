@@ -6,9 +6,11 @@
 /*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/28 02:19:06 by hudescam          #+#    #+#             */
-/*   Updated: 2026/02/28 02:37:24 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/02/28 02:42:14 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "parsing.h"
 
 char	*process_double_content(char *word, char *tmp)
 {

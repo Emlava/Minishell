@@ -6,9 +6,11 @@
 /*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/28 01:24:22 by hudescam          #+#    #+#             */
-/*   Updated: 2026/02/28 02:18:29 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/02/28 02:42:00 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "parsing.h"
 
 t_redir_type	get_redir_type(t_token_type type)
 {
