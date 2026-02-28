@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/28 14:01:32 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/28 22:14:14 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,5 +80,8 @@ char	*define_non_reiterative_path(char **argv, t_exec_resources *exec_resources,
 			char *home);
 void	exit_cleanup(t_exec_resources *exec_resources,
 			t_prompt_resources *prompt_resources);
+
+// **** builtins_utils.c **** //
+int		run_executable(char **argv, t_exec_resources *exec_resources);
 
 #endif

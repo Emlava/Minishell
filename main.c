@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/28 14:38:01 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/02/28 22:12:58 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,36 +57,14 @@ int	main(int ac, char *av[], char *envp[])
 		{
 			// manage_piping_and_redirection(curr_command_node);
 			if (curr_command_node->builtin)
-				exec_resources.curr_exit_status = manage_builtin(curr_command_node, &exec_resources, &prompt_resources);	
-			// else
-			// 	exec_resources.curr_exit_status = run_executable(curr_command_node->argv, &exec_resources);
-			// if (exec_resources.last_command_present == true)
-			// 	update_local_env_last_command(&exec_resources, curr_command_node->argv[0]); // Make sure
+				exec_resources.curr_exit_status = (unsigned char)manage_builtin(curr_command_node, &exec_resources, &prompt_resources);	
+			else
+				exec_resources.curr_exit_status = (unsigned char)run_executable(curr_command_node->argv, &exec_resources);
+			if (exec_resources.last_command_present == true)
+				update_local_env_last_command(&exec_resources, curr_command_node->argv[0]); // Make sure
 			// That the first index is always a command and never a redirection
 			curr_command_node = curr_command_node->next;
 		}
-		
-		// // This will be in run_executable()
-		// pid_t	pid = fork();
-		// if (pid == 0)
-		// {
-		// 	char	*absolute_path = ft_strjoin("/usr/bin/", user_input);
-		// 	if (execve(absolute_path, command_list->argv, envp) == -1) // Run simple commands without arguments nor options
-		// 	{
-		// 		printf("minishell: "); // Use ft_strjoin() instead
-		// 		perror(user_input);
-		// 		if (ft_strncmp(prompt, "42_minishell: ", 15) != 0)
-		// 			free(prompt);
-		// 		free(user_input);
-		// 		free(absolute_path);
-		// 		rl_clear_history();
-		// 		return (1);
-		// 	}
-		// }
-		// else
-		// 	waitpid(pid, NULL, 0); // Change this so that it gets the return status
-		//
-		
 		free(exec_resources.user_input);
 		free_cmds(exec_resources.command_list);
 	}
