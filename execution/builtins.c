@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:14:19 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/01 18:17:07 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/01 23:49:06 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int	ft_cd(char **argv, t_exec_resources *exec_resources, t_prompt_resources *pro
 	}
 	if (chdir(final_path) == -1)
 	{
-		err_str = ft_strjoin("minishell: cd: ", final_path); // free
+		err_str = ft_strjoin("minishell: cd: ", argv[1]); // free
 		free(final_path);
 		if (err_str != NULL)
 		{
