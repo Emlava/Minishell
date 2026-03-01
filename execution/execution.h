@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/28 22:14:14 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/01 18:25:52 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ typedef struct s_exec_resources
 	char			*prompt;
 	char			*user_input;
 	t_cmd			*command_list;
-	unsigned char	curr_exit_status;
+	int				curr_exit_status;
 }	t_exec_resources;
 
 typedef struct s_dir_list
@@ -66,22 +66,18 @@ char	*get_local_env(char **local_envp, char *name);
 void	update_local_env_paths(t_exec_resources *exec_resources, char *new_pwd);
 void	update_local_env_last_command(t_exec_resources *exec_resources, char *last_command);
 
-// **** prompt_management/manage_prompt_utils.c **** //
-// int		determine_second_field(t_prompt *prompt_resources, bool *hostname_present);
-// void	format_working_dir(t_prompt *prompt_resources, bool hostname_present);
-// void	free_and_null_tmp(t_prompt *prompt_resources);
-// void	free_prompt_resources(t_prompt *prompt_resources, int instance);
-
 // **** builtins.c **** //
 int		manage_builtin(t_cmd *command, t_exec_resources *exec_resources, t_prompt_resources *prompt_resources);
 
-// **** builtins_utils.c **** //
-char	*define_non_reiterative_path(char **argv, t_exec_resources *exec_resources,
+// **** path_management/define_non_reiterative_path.c **** //
+char	*define_non_reiterative_path(char *requested_path, t_exec_resources *exec_resources,
 			char *home);
-void	exit_cleanup(t_exec_resources *exec_resources,
-			t_prompt_resources *prompt_resources);
 
 // **** builtins_utils.c **** //
-int		run_executable(char **argv, t_exec_resources *exec_resources);
+int		run_executable(char **argv, t_exec_resources *exec_resources,
+			t_prompt_resources *prompt_resources);
+
+// **** main.c **** //
+void	exit_cleanup(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources);
 
 #endif

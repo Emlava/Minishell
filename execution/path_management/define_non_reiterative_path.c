@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtins_utils.c                                   :+:      :+:    :+:   */
+/*   define_non_reiterative_path.c                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 14:18:15 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/28 17:44:38 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/01 18:26:09 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../../minishell.h"
 
 static char	*find_next_dir(char **fields, int fields_count, int *curr_field)
 {
@@ -122,60 +122,39 @@ static char	*manage_relative_path(char *requested_path, char *pwd)
 	return (final_path);
 }
 
-static void	manage_tilde(char **argv, char *home)
+static void	manage_tilde(char *requested_path, char *home)
 {
 	char	*tmp_str;
 	
-	tmp_str = argv[1];
-	argv[1] = ft_strjoin(home, argv[1] + 1);
+	tmp_str = requested_path;
+	requested_path = ft_strjoin(home, requested_path + 1);
 	free(tmp_str);
 	return ;
 }
 
-char	*define_non_reiterative_path(char **argv, t_exec_resources *exec_resources,
+char	*define_non_reiterative_path(char *requested_path, t_exec_resources *exec_resources,
 	char *home)
 {
 	char	*final_path;
 	char	*pwd;
 
-	if (argv[1] == NULL)
+	if (ft_strncmp(requested_path, "/", 2) == 0)
+		return (ft_strdup(requested_path));
+	if (requested_path[0] == '~' && (requested_path[1] == '/' || requested_path[1] == '\0'))
 	{
-		final_path = ft_strdup(home); // free
-		return (final_path);
-	}
-	if (ft_strncmp(argv[1], "/", 2) == 0)
-		return (ft_strdup(argv[1]));
-	if (argv[1][0] == '~' && (argv[1][1] == '/' || argv[1][1] == '\0'))
-	{
-		manage_tilde(argv, home);
-		if (argv[1] == NULL)
+		manage_tilde(requested_path, home);
+		if (requested_path == NULL)
 			return (NULL);
 	}
-	if (argv[1][0] == '/')
-		final_path = manage_absolute_path(argv[1]); // free
+	if (requested_path[0] == '/')
+		final_path = manage_absolute_path(requested_path); // free
 	else
 	{
 		if (exec_resources->pwd_present == true)
 			pwd = exec_resources->local_envp[exec_resources->pwd_index];
 		else
 			pwd = NULL;
-		final_path = manage_relative_path(argv[1], pwd); // free
+		final_path = manage_relative_path(requested_path, pwd); // free
 	}
 	return (final_path);
-}
-
-void	exit_cleanup(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
-{
-	free(exec_resources->user_input);
-	free_cmds(exec_resources->command_list);
-	ft_free_str_arr(exec_resources->local_envp);
-	if (exec_resources->prompt != NULL)
-	{
-		free(exec_resources->prompt);
-		if (prompt_resources->free_permanent_substr == true)
-			free(prompt_resources->permanent_prompt_substr);
-	}
-	rl_clear_history();
-	// if piping or redirections: close fds
-	return ;
 }

@@ -6,13 +6,29 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/01 01:43:53 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/01 16:43:19 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 int	g_exit_status = 0;
+
+void	exit_cleanup(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
+{
+	free(exec_resources->user_input);
+	free_cmds(exec_resources->command_list);
+	ft_free_str_arr(exec_resources->local_envp);
+	if (exec_resources->prompt != NULL)
+	{
+		free(exec_resources->prompt);
+		if (prompt_resources->free_permanent_substr == true)
+			free(prompt_resources->permanent_prompt_substr);
+	}
+	rl_clear_history();
+	// if piping or redirections: close fds
+	return ;
+}
 
 int	main(int ac, char *av[], char *envp[])
 {
@@ -57,9 +73,10 @@ int	main(int ac, char *av[], char *envp[])
 		{
 			// manage_piping_and_redirection(curr_command_node);
 			if (curr_command_node->builtin)
-				exec_resources.curr_exit_status = (unsigned char)manage_builtin(curr_command_node, &exec_resources, &prompt_resources);	
+				exec_resources.curr_exit_status = manage_builtin(curr_command_node, &exec_resources, &prompt_resources);	
 			else
-				exec_resources.curr_exit_status = (unsigned char)run_executable(curr_command_node->argv, &exec_resources);
+				exec_resources.curr_exit_status = run_executable(curr_command_node->argv, &exec_resources,
+					&prompt_resources);
 			if (exec_resources.last_command_present == true)
 				update_local_env_last_command(&exec_resources, curr_command_node->argv[0]); // Make sure
 			// That the first index is always a command and never a redirection

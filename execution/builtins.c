@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:14:19 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/28 17:56:52 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/01 18:17:07 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,10 @@ int	ft_cd(char **argv, t_exec_resources *exec_resources, t_prompt_resources *pro
 		ft_dprintf(2, "minishell: cd: too many arguments\n");
 		return (1);
 	}
-	final_path = define_non_reiterative_path(argv, exec_resources, prompt_resources->home);
+	if (argv[1] == NULL)
+		final_path = ft_strdup(prompt_resources->home); // free
+	else
+		final_path = define_non_reiterative_path(argv[1], exec_resources, prompt_resources->home);
 	if (final_path == NULL)
 	{
 		ft_dprintf(2, "minishell: cd: failed to manage path because of a malloc() failure\n");
