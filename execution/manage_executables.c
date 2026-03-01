@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/28 20:47:11 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/28 22:16:28 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/01 01:41:08 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,7 @@ int	run_executable(char **argv, t_exec_resources *exec_resources)
 			{
 				free(potential_path);
 				// free and close everything else
-				tmp_str = ft_strjoin("minishell: ", argv[0]); // free
-				perror(tmp_str);
-				free(tmp_str);
+				ft_dprintf(2, "minishell: %s: command not found\n", argv[0]);
 				exit(errno + 128);
 			}
 			free(potential_path);
