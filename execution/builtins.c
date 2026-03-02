@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:14:19 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/01 23:49:06 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/02 19:47:52 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,9 +115,24 @@ int	ft_pwd(char **argv, char **local_envp)
 // 	}
 // }
 
+int	ft_env(char **argv, char **envp)
+{
+	int	i;
+
+	if (argv[1] != NULL)
+	{
+		ft_dprintf(2, "minishell: env: no options for this builtin\n");
+		return (1);
+	}
+	i = 0;
+	while (envp[i] != NULL)
+		printf("%s\n", envp[i++]);
+	return (0);
+}
+
 int	ft_exit(char **argv, t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
 {
-	unsigned char	exit_status;
+	int	exit_status;
 
 	// if piping was implemented, we manage things differently
 	printf("exit\n");
@@ -134,7 +149,7 @@ int	ft_exit(char **argv, t_exec_resources *exec_resources, t_prompt_resources *p
 			exit_status = 2;
 		}
 		else
-			exit_status = (unsigned char)ft_atoi(argv[1]);
+			exit_status = ft_atoi(argv[1]);
 	}
 	else
 		exit_status = exec_resources->curr_exit_status;
@@ -154,8 +169,8 @@ int	manage_builtin(t_cmd *command, t_exec_resources *exec_resources, t_prompt_re
 	// 	return (ft_export(command->argv));
 	// if (command->builtin == BUILTIN_UNSET)
 	// 	return (ft_unset(command->argv));
-	// if (command->builtin == BUILTIN_ENV)
-	// 	return (ft_env(command->argv));
+	if (command->builtin == BUILTIN_ENV)
+		return (ft_env(command->argv, exec_resources->local_envp));
 	else
 		return (ft_exit(command->argv, exec_resources, prompt_resources));
 }

@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/01 16:43:19 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/02 20:28:01 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,12 +74,11 @@ int	main(int ac, char *av[], char *envp[])
 			// manage_piping_and_redirection(curr_command_node);
 			if (curr_command_node->builtin)
 				exec_resources.curr_exit_status = manage_builtin(curr_command_node, &exec_resources, &prompt_resources);	
-			else
+			if (curr_command_node->argv[0] != NULL && exec_resources.last_arg_present == true)
+				update_local_env_last_arg(&exec_resources, curr_command_node->argv);
+			if (curr_command_node->builtin == false)
 				exec_resources.curr_exit_status = run_executable(curr_command_node->argv, &exec_resources,
 					&prompt_resources);
-			if (exec_resources.last_command_present == true)
-				update_local_env_last_command(&exec_resources, curr_command_node->argv[0]); // Make sure
-			// That the first index is always a command and never a redirection
 			curr_command_node = curr_command_node->next;
 		}
 		free(exec_resources.user_input);

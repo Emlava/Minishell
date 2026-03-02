@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 18:13:02 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/28 14:50:05 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/02 20:10:55 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,10 @@ char	**duplicate_environment(char *envp[])
 	i = 0;
 	while (i < env_var_count)
 	{
-		env_duplicate[i] = ft_strdup(envp[i]); // free each
+		if (ft_strncmp(envp[i], "_=", 2) == 0)
+			env_duplicate[i] = ft_strdup("_=]"); // free
+		else
+			env_duplicate[i] = ft_strdup(envp[i]); // free each
 		if (env_duplicate[i] == NULL)
 		{
 			ft_free_str_arr(env_duplicate);
@@ -50,9 +53,9 @@ void	check_essential_env_vars(t_exec_resources *exec_resources)
 	else
 		exec_resources->oldpwd_present = true;
 	if (get_local_env(exec_resources->local_envp, "_") == NULL)
-		exec_resources->last_command_present = false;
+		exec_resources->last_arg_present = false;
 	else
-		exec_resources->last_command_present = true;
+		exec_resources->last_arg_present = true;
 	return ;
 }
 
@@ -74,12 +77,12 @@ void	get_var_indexes(t_exec_resources *exec_resources)
 			i++;
 		exec_resources->oldpwd_index = i;
 	}
-	if (exec_resources->last_command_present == true)
+	if (exec_resources->last_arg_present == true)
 	{
 		i = 0;
 		while (ft_strncmp(exec_resources->local_envp[i], "_=", 2))
 			i++;
-		exec_resources->last_command_index = i;
+		exec_resources->last_arg_index = i;
 	}
 	return ;
 }
@@ -117,9 +120,16 @@ void	update_local_env_paths(t_exec_resources *exec_resources, char *new_pwd)
 	return ;
 }
 
-void	update_local_env_last_command(t_exec_resources *exec_resources, char *last_command)
+void	update_local_env_last_arg(t_exec_resources *exec_resources, char **argv)
 {
-	free(exec_resources->local_envp[exec_resources->last_command_index]);
-	exec_resources->local_envp[exec_resources->last_command_index] = ft_strjoin("_=", last_command); // This is freed when freeing local_envp	
+	char	*last_arg;
+	int		i;
+
+	i = 0;
+	while (argv[i + 1] != NULL)
+		i++;
+	last_arg = argv[i];
+	free(exec_resources->local_envp[exec_resources->last_arg_index]);
+	exec_resources->local_envp[exec_resources->last_arg_index] = ft_strjoin("_=", last_arg); // This is freed when freeing local_envp	
 	return ;
 }

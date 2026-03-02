@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 14:18:15 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/01 18:26:09 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/02 20:39:26 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,13 +122,10 @@ static char	*manage_relative_path(char *requested_path, char *pwd)
 	return (final_path);
 }
 
-static void	manage_tilde(char *requested_path, char *home)
+static void	manage_tilde(char **requested_path, char *home)
 {
-	char	*tmp_str;
-	
-	tmp_str = requested_path;
-	requested_path = ft_strjoin(home, requested_path + 1);
-	free(tmp_str);
+	*requested_path = ft_strjoin(home, (*requested_path) + 1); // We must not free the previous value of
+	// requested_path, as the memory belongs to argv.
 	return ;
 }
 
@@ -142,7 +139,7 @@ char	*define_non_reiterative_path(char *requested_path, t_exec_resources *exec_r
 		return (ft_strdup(requested_path));
 	if (requested_path[0] == '~' && (requested_path[1] == '/' || requested_path[1] == '\0'))
 	{
-		manage_tilde(requested_path, home);
+		manage_tilde(&requested_path, home);
 		if (requested_path == NULL)
 			return (NULL);
 	}

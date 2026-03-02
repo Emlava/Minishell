@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/01 18:25:52 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/02 19:59:12 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,10 @@ typedef struct s_exec_resources
 	char			**local_envp;
 	bool			pwd_present;
 	bool			oldpwd_present;
-	bool			last_command_present;
+	bool			last_arg_present;
 	int				pwd_index;
 	int				oldpwd_index;
-	int				last_command_index;
+	int				last_arg_index;
 	char			*prompt;
 	char			*user_input;
 	t_cmd			*command_list;
@@ -64,7 +64,7 @@ void	check_essential_env_vars(t_exec_resources *exec_resources);
 void	get_var_indexes(t_exec_resources *exec_resources);
 char	*get_local_env(char **local_envp, char *name);
 void	update_local_env_paths(t_exec_resources *exec_resources, char *new_pwd);
-void	update_local_env_last_command(t_exec_resources *exec_resources, char *last_command);
+void	update_local_env_last_arg(t_exec_resources *exec_resources, char **argv);
 
 // **** builtins.c **** //
 int		manage_builtin(t_cmd *command, t_exec_resources *exec_resources, t_prompt_resources *prompt_resources);
