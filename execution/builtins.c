@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:14:19 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/02 20:46:55 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/02 22:52:07 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	ft_echo(char **argv)
 	bool	n_option;
 
 	i = 1;
-	if (ft_strncmp(argv[1], "-n", 3) == 0)
+	if (argv[1] && ft_strncmp(argv[1], "-n", 3) == 0)
 	{
 		i++;
 		n_option = true;
