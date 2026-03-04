@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:14:19 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/04 20:52:36 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/04 23:14:58 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,26 +93,28 @@ int	ft_pwd(char **argv, char **local_envp)
 	return (0);
 }
 
-// int	ft_export(char **argv)
-// {
-// 	int		i;
+int	ft_export(char **argv)
+{
+	int		i;
 
-// 	if (argv[1] == NULL)
-// 	{
-// 		ft_dprintf(2, "minishell: export: argument needed\n");
-// 		return (1);
-// 	}
-// 	if (argv[1][0] == '-')
-// 	{
-// 		ft_dprintf(2, "minishell: export: no options for this builtin\n");
-// 		return (2);
-// 	}
-// 	i = 1;
-// 	while (argv[i] != NULL)
-// 	{
+	if (argv[1] == NULL)
+	{
+		ft_dprintf(2, "minishell: export: argument needed\n");
+		return (1);
+	}
+	if (argv[1][0] == '-')
+	{
+		ft_dprintf(2, "minishell: export: no options for this builtin\n");
+		return (2);
+	}
+	if (ft_strchr(argv[1], '=') == NULL)
+	
+	i = 1;
+	while (argv[i] != NULL)
+	{
 		
-// 	}
-// }
+	}
+}
 
 int	ft_env(char **argv, char **envp)
 {

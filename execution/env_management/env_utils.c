@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 18:13:02 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/02 20:10:55 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/04 23:42:34 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,26 +63,32 @@ void	get_var_indexes(t_exec_resources *exec_resources)
 {
 	int	i;
 
-	if (exec_resources->pwd_present == true)
+	i = 0;
+	while (exec_resources->local_envp[i] && ft_strncmp(exec_resources->local_envp[i], "PWD=", 4))
+		i++;
+	if (exec_resources->local_envp[i])
 	{
-		i = 0;
-		while (ft_strncmp(exec_resources->local_envp[i], "PWD=", 4))
-			i++;
 		exec_resources->pwd_index = i;
+		if (exec_resources->pwd_present == false)
+			exec_resources->pwd_present = true;
 	}
-	if (exec_resources->oldpwd_present == true)
+	i = 0;
+	while (exec_resources->local_envp[i] && ft_strncmp(exec_resources->local_envp[i], "OLDPWD=", 7))
+		i++;
+	if (exec_resources->local_envp[i])
 	{
-		i = 0;
-		while (ft_strncmp(exec_resources->local_envp[i], "OLDPWD=", 7))
-			i++;
 		exec_resources->oldpwd_index = i;
+		if (exec_resources->oldpwd_present == false)
+			exec_resources->oldpwd_present = true;
 	}
-	if (exec_resources->last_arg_present == true)
+	i = 0;
+	while (exec_resources->local_envp && ft_strncmp(exec_resources->local_envp[i], "_=", 2))
+		i++;
+	if (exec_resources->local_envp[i])
 	{
-		i = 0;
-		while (ft_strncmp(exec_resources->local_envp[i], "_=", 2))
-			i++;
 		exec_resources->last_arg_index = i;
+		if (exec_resources->last_arg_present == false)
+			exec_resources->last_arg_present = true;
 	}
 	return ;
 }
@@ -109,14 +115,17 @@ char	*get_local_env(char **local_envp, char *name)
 
 void	update_local_env_paths(t_exec_resources *exec_resources, char *new_pwd)
 {
+	if (exec_resources->pwd_present == true)
+	{
+		free(exec_resources->local_envp[exec_resources->pwd_index]);
+		exec_resources->local_envp[exec_resources->pwd_index] = ft_strjoin("PWD=", new_pwd); // This is freed when freeing local_envp	
+	}
 	if (exec_resources->oldpwd_present == true)
 	{
 		free(exec_resources->local_envp[exec_resources->oldpwd_index]);
 		exec_resources->local_envp[exec_resources->oldpwd_index]
 			= ft_strjoin("OLDPWD=", exec_resources->local_envp[exec_resources->pwd_index] + 4); // This is freed when freeing local_envp	
 	}
-	free(exec_resources->local_envp[exec_resources->pwd_index]);
-	exec_resources->local_envp[exec_resources->pwd_index] = ft_strjoin("PWD=", new_pwd); // This is freed when freeing local_envp	
 	return ;
 }
 
