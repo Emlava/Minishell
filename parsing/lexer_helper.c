@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_helper.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 23:32:12 by hudescam          #+#    #+#             */
-/*   Updated: 2026/02/20 13:21:31 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/03/04 15:59:24 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,14 +58,17 @@ void	handle_output_redir(char *line, int *i, t_token **tokens)
 	}
 }
 
-int	handle_word(char *line, int *i, t_token **tokens)
+int	handle_word(char *line, int *i, t_token **tokens, char **envp)
 {
-	char	*word;
-	int		quoted;
-	t_token	*new;
+	char		*word;
+	int			quoted;
+	t_token		*new;
+	t_parse_ctx	ctx;
 
 	quoted = 0;
-	word = read_word(line, i, &quoted);
+	ctx.envp = envp;
+	ctx.quoted = &quoted;
+	word = read_word(line, i, &ctx);
 	if (!word)
 		return (0);
 	new = token_new(TOKEN_WORD, word);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 19:38:36 by hudescam          #+#    #+#             */
-/*   Updated: 2026/02/28 02:39:09 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/03/04 16:04:36 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,18 +73,24 @@ typedef struct s_cmd
 	struct s_cmd	*next;
 }	t_cmd;
 
+typedef struct s_parse_ctx
+{
+	char	**envp;
+	int		*quoted;
+}	t_parse_ctx;
+
 extern int	g_exit_status;
 
-char			*read_word(char *line, int *i, int *quoted);
+char			*read_word(char *line, int *i, t_parse_ctx *ctx);
 t_token			*token_new(t_token_type type, char *value);
 void			token_add_back(t_token **lst, t_token *new);
-t_token			*lexer(char *line);
+t_token			*lexer(char *line, char **envp);
 
 int				is_operator(char c);
 void			handle_operator(char *line, int *i, t_token **tokens);
 void			handle_input_redir(char *line, int *i, t_token **tokens);
 void			handle_output_redir(char *line, int *i, t_token **tokens);
-int				handle_word(char *line, int *i, t_token **tokens);
+int				handle_word(char *line, int *i, t_token **tokens, char **envp);
 
 int				ft_isspace(int c);
 char			*ft_strjoin_free(char *s1, char *s2);
@@ -102,20 +108,25 @@ void			add_arg(t_cmd *cmd, char *value);
 void			add_redir(t_cmd *cmd, t_token *token);
 t_cmd			*parse_tokens(t_token *tokens);
 
-char			*process_double_content(char *word, char *tmp);
-char			*handle_quote_case(char *word, char *line, int *i, int *quoted);
-char			*handle_word_char(char *word, char *line, int *i);
+char			*process_double_content(char *word, char *tmp,
+					t_parse_ctx *ctx);
+char			*handle_quote_case(char *word, char *line, int *i,
+					t_parse_ctx *ctx);
+char			*handle_word_char(char *word, char *line, int *i,
+					t_parse_ctx *ctx);
 
 char			*append_plain(char *word, char *line, int *i);
-char			*append_variable(char *word, char *line, int *i);
+char			*append_variable(char *word, char *line, int *i,
+					t_parse_ctx *ctx);
 char			*append_single_quoted(char *word, char *line, int *i);
-char			*append_double_quoted(char *word, char *line, int *i);
+char			*append_double_quoted(char *word, char *line, int *i,
+					t_parse_ctx *ctx);
 
 int				check_syntax(t_token *tokens);
 
 void			sigint_handler(int sig);
 void			init_signals(void);
 
-t_cmd			*start_parsing(char *line);
+t_cmd			*start_parsing(char *line, char **envp);
 
 #endif

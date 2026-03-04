@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   read_word_helper.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/28 02:19:06 by hudescam          #+#    #+#             */
-/*   Updated: 2026/02/28 02:42:14 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/03/04 16:05:46 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing.h"
 
-char	*process_double_content(char *word, char *tmp)
+char	*process_double_content(char *word, char *tmp, t_parse_ctx *ctx)
 {
 	int	start;
 	int	plain_start;
@@ -21,7 +21,7 @@ char	*process_double_content(char *word, char *tmp)
 	while (tmp[start])
 	{
 		if (tmp[start] == '$')
-			word = append_variable(word, tmp, &start);
+			word = append_variable(word, tmp, &start, ctx);
 		else
 		{
 			plain_start = start;
@@ -34,24 +34,24 @@ char	*process_double_content(char *word, char *tmp)
 	return (word);
 }
 
-char	*handle_quote_case(char *word, char *line, int *i, int *quoted)
+char	*handle_quote_case(char *word, char *line, int *i, t_parse_ctx *ctx)
 {
 	if (line[*i] == '\'')
 	{
-		*quoted = 1;
+		*(ctx->quoted) = 1;
 		return (append_single_quoted(word, line, i));
 	}
 	if (line[*i] == '"')
 	{
-		*quoted = 1;
-		return (append_double_quoted(word, line, i));
+		*(ctx->quoted) = 1;
+		return (append_double_quoted(word, line, i, ctx));
 	}
 	return (word);
 }
 
-char	*handle_word_char(char *word, char *line, int *i)
+char	*handle_word_char(char *word, char *line, int *i, t_parse_ctx *ctx)
 {
 	if (line[*i] == '$')
-		return (append_variable(word, line, i));
+		return (append_variable(word, line, i, ctx));
 	return (append_plain(word, line, i));
 }

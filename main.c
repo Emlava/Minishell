@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/02 20:28:01 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/04 15:59:24 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,8 @@ int	main(int ac, char *av[], char *envp[])
     	}
 		
 		add_history(exec_resources.user_input);
-		exec_resources.command_list = start_parsing(exec_resources.user_input);
+		exec_resources.command_list =
+			start_parsing(exec_resources.user_input, exec_resources.local_envp);
 		curr_command_node = exec_resources.command_list;
 
 		while (curr_command_node != NULL)

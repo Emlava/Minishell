@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   start_parsing.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 16:25:10 by hudescam          #+#    #+#             */
-/*   Updated: 2026/02/23 13:38:44 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/03/04 15:59:24 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,14 +57,14 @@
 // 	}
 // }
 
-t_cmd	*start_parsing(char *line)
+t_cmd	*start_parsing(char *line, char **envp)
 {
 	t_token	*tokens;
 	t_cmd	*cmds;
 
 	if (!line)
 		return (NULL);
-	tokens = lexer(line);
+	tokens = lexer(line, envp);
 	if (!tokens)
 		return (NULL);
 	if (!check_syntax(tokens))
