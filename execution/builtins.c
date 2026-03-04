@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:14:19 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/02 22:52:07 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/04 20:52:36 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,17 +96,16 @@ int	ft_pwd(char **argv, char **local_envp)
 // int	ft_export(char **argv)
 // {
 // 	int		i;
-// 	char	*err_str;
 
 // 	if (argv[1] == NULL)
 // 	{
-// 		// Print all exported variables
-// 		return (0);
+// 		ft_dprintf(2, "minishell: export: argument needed\n");
+// 		return (1);
 // 	}
 // 	if (argv[1][0] == '-')
 // 	{
 // 		ft_dprintf(2, "minishell: export: no options for this builtin\n");
-// 		return (1);
+// 		return (2);
 // 	}
 // 	i = 1;
 // 	while (argv[i] != NULL)
