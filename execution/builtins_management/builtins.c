@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:14:19 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/05 17:27:32 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/05 17:36:08 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,9 +125,6 @@ int	export_var(char *requested_var, char **envp, t_new_exports **new_exports)
 	if (!var_name)
 		return (1);
 	ft_strlcpy(var_name, requested_var, i + 1);
-	//
-	printf("var_name: %s\n", var_name);
-	//
 	preexisting_env_var = get_local_env(envp, var_name);
 	if (preexisting_env_var != NULL)
 	{
