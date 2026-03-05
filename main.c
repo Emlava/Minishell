@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/05 11:23:04 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/05 19:43:21 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,26 @@
 
 int	g_exit_status = 0;
 
+void	free_exp_vars(t_new_exports *new_exports)
+{
+	t_new_exports	*tmp;
+	
+	while (new_exports)
+	{
+		tmp = new_exports;
+		free(new_exports->var);
+		new_exports = new_exports->next;
+		free(tmp);
+	}
+	return ;
+}
+
 void	exit_cleanup(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
 {
 	free(exec_resources->user_input);
 	free_cmds(exec_resources->command_list);
 	ft_free_str_arr(exec_resources->local_envp);
+	free_exp_vars(exec_resources->new_exports);
 	if (exec_resources->prompt != NULL)
 	{
 		free(exec_resources->prompt);
@@ -63,7 +78,8 @@ int	main(int ac, char *av[], char *envp[])
 		if (!exec_resources.user_input)
     	{
         	ft_printf("exit\n");
-        	break;
+			exit_cleanup(&exec_resources, &prompt_resources);
+        	return (exec_resources.curr_exit_status); // Check
     	}
 		
 		add_history(exec_resources.user_input);

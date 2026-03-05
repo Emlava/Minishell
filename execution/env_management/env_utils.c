@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 18:13:02 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/05 16:49:32 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/05 19:44:44 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void	get_var_indexes(t_exec_resources *exec_resources)
 			exec_resources->oldpwd_present = true;
 	}
 	i = 0;
-	while (exec_resources->local_envp && ft_strncmp(exec_resources->local_envp[i], "_=", 2))
+	while (exec_resources->local_envp[i] && ft_strncmp(exec_resources->local_envp[i], "_=", 2))
 		i++;
 	if (exec_resources->local_envp[i])
 	{
