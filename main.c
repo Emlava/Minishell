@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
+/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/04 15:59:24 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/03/05 11:23:04 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,8 @@ int	main(int ac, char *av[], char *envp[])
 	if (exec_resources.local_envp == NULL)
 		return (2);
 	check_essential_env_vars(&exec_resources);
-	get_var_indexes(&exec_resources); // CALL THIS AGAIN WHEN SETTING OR UNSETTING
+	get_var_indexes(&exec_resources); // CALL THIS AGAIN WHEN UNSETTING
+	exec_resources.new_exports = NULL;
 	exec_resources.prompt = NULL;
 	define_prompt(&exec_resources.prompt, &prompt_resources, exec_resources.local_envp);
 	exec_resources.curr_exit_status = 0;

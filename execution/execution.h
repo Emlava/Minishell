@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/02 19:59:12 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/05 12:11:18 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ typedef struct s_prompt_resources
 typedef struct s_exec_resources
 {
 	char			**local_envp;
+	t_new_exports	*new_exports;
 	bool			pwd_present;
 	bool			oldpwd_present;
 	bool			last_arg_present;
@@ -48,36 +49,36 @@ typedef struct s_exec_resources
 	int				curr_exit_status;
 }	t_exec_resources;
 
-typedef struct s_dir_list
+typedef struct s_new_exports
 {
-	char				*directory;
-	struct s_dir_list	*next;
-	struct s_dir_list	*prev;
-}	t_dir_list;
+	char					*var;
+	struct s_new_exports	*next;
+}	t_new_exports;
 
 // **** prompt_management/manage_prompt.c **** //
-void	define_prompt(char **prompt, t_prompt_resources *prompt_resources, char **envp);
+void			define_prompt(char **prompt, t_prompt_resources *prompt_resources, char **envp);
 
 // **** env_management/env_utils.c **** //
-char	**duplicate_environment(char *envp[]);
-void	check_essential_env_vars(t_exec_resources *exec_resources);
-void	get_var_indexes(t_exec_resources *exec_resources);
-char	*get_local_env(char **local_envp, char *name);
-void	update_local_env_paths(t_exec_resources *exec_resources, char *new_pwd);
-void	update_local_env_last_arg(t_exec_resources *exec_resources, char **argv);
+char			**duplicate_environment(char *envp[]);
+void			check_essential_env_vars(t_exec_resources *exec_resources);
+void			get_var_indexes(t_exec_resources *exec_resources);
+char			*get_local_env(char **local_envp, char *name);
+t_new_exports	*get_local_exp(t_new_exports *new_exports, char *name);
+void			update_local_env_paths(t_exec_resources *exec_resources, char *new_pwd);
+void			update_local_env_last_arg(t_exec_resources *exec_resources, char **argv);
 
 // **** builtins.c **** //
-int		manage_builtin(t_cmd *command, t_exec_resources *exec_resources, t_prompt_resources *prompt_resources);
+int				manage_builtin(t_cmd *command, t_exec_resources *exec_resources, t_prompt_resources *prompt_resources);
 
 // **** path_management/define_non_reiterative_path.c **** //
-char	*define_non_reiterative_path(char *requested_path, t_exec_resources *exec_resources,
-			char *home);
+char			*define_non_reiterative_path(char *requested_path, t_exec_resources *exec_resources,
+					char *home);
 
-// **** builtins_utils.c **** //
-int		run_executable(char **argv, t_exec_resources *exec_resources,
-			t_prompt_resources *prompt_resources);
+// **** execution/manage_executables.c **** //
+int				run_executable(char **argv, t_exec_resources *exec_resources,
+					t_prompt_resources *prompt_resources);
 
 // **** main.c **** //
-void	exit_cleanup(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources);
+void			exit_cleanup(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources);
 
 #endif

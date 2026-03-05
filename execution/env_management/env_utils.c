@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 18:13:02 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/04 23:42:34 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/05 12:45:04 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,30 @@ char	*get_local_env(char **local_envp, char *name)
 	if (local_envp[i] == NULL)
 		return (NULL);
 	return (local_envp[i] + formatted_name_len);
+}
+
+// Unlike get_local_env(), this function will return the node containing
+// the requested variable, not simply a pointer to the value of the variable.
+t_new_exports	*get_local_exp(t_new_exports **new_exports, char *name)
+{
+	char			*formatted_name;
+	size_t			formatted_name_len;
+	t_new_exports	*curr_exp_var;
+
+	if (*new_exports == NULL)
+		return (NULL);
+	formatted_name = ft_strjoin(name, "="); // free
+	if (formatted_name == NULL)
+		return (NULL);
+	formatted_name_len = ft_strlen(formatted_name);
+	curr_exp_var = *new_exports;
+	while (curr_exp_var != NULL
+		&& ft_strncmp(curr_exp_var->var, formatted_name, formatted_name_len))
+		curr_exp_var = curr_exp_var->next;
+	free(formatted_name);
+	if (curr_exp_var == NULL)
+		return (NULL);
+	return (curr_exp_var);
 }
 
 void	update_local_env_paths(t_exec_resources *exec_resources, char *new_pwd)
