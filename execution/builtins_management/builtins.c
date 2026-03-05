@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:14:19 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/05 12:50:34 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/05 17:27:32 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,8 +102,8 @@ static int	valid_identifier_check(char *requested_var)
 		return (1);
 	while (requested_var[i])
 	{
-		if (!ft_isalnum(requested_var[i]) && requested_var != '_'
-			&& requested_var != '=')
+		if (!ft_isalnum(requested_var[i]) && requested_var[i] != '_'
+			&& requested_var[i] != '=')
 			return (1);
 		i++;
 	}
@@ -114,8 +114,9 @@ int	export_var(char *requested_var, char **envp, t_new_exports **new_exports)
 {
 	int				i;
 	char			*var_name;
-	char			*preexisting_var;
+	char			*preexisting_env_var;
 	t_new_exports	*curr_exp_var;
+	t_new_exports	*preexisting_exp_var;
 
 	i = 0;
 	while (requested_var[i] != '=')
@@ -123,24 +124,59 @@ int	export_var(char *requested_var, char **envp, t_new_exports **new_exports)
 	var_name = malloc(sizeof(char) * (i + 1)); // free
 	if (!var_name)
 		return (1);
-	ft_strlcpy(var_name, requested_var, i); // Does this have to be 1 + 1?
-	preexisting_var = get_local_env(envp, var_name);
-	if (preexisting_var != NULL)
+	ft_strlcpy(var_name, requested_var, i + 1);
+	//
+	printf("var_name: %s\n", var_name);
+	//
+	preexisting_env_var = get_local_env(envp, var_name);
+	if (preexisting_env_var != NULL)
 	{
-		preexisting_var -= (ft_strlen(var_name) + 1);
+		preexisting_env_var -= (ft_strlen(var_name) + 1);
 		free(var_name);
-		free(preexisting_var);
-		preexisting_var = ft_strdup(requested_var);
-		if (preexisting_var == NULL)
+		free(preexisting_env_var);
+		preexisting_env_var = ft_strdup(requested_var);
+		if (preexisting_env_var == NULL)
 			return (2);
 		return (0);
 	}
-	curr_exp_var = *new_exports;
-	if (curr_exp_var != NULL) // Then replace the current variable with the requested one
-		preexisting_var = get_local_exp(new_exports, var_name);
-	// else allocate a new node (always assigning NULL to the member next) at the end of the list
-	// and assign requested_var to its var member.
-	free(var_name);
+	if (*new_exports == NULL)
+	{
+		free(var_name);
+		*new_exports = malloc(sizeof(t_new_exports)); // free
+		if (*new_exports == NULL)
+			return (3);
+		(*new_exports)->var = ft_strdup(requested_var); // free
+		if ((*new_exports)->var == NULL)
+			return (4);
+		(*new_exports)->next = NULL;
+	}
+	else
+	{
+		curr_exp_var = *new_exports;
+		preexisting_exp_var = get_local_exp(new_exports, var_name);
+		free(var_name);
+		if (preexisting_exp_var == NULL)
+		{
+			while (curr_exp_var->next != NULL)
+				curr_exp_var = curr_exp_var->next;
+			curr_exp_var->next = malloc(sizeof(t_new_exports)); // free
+			curr_exp_var = curr_exp_var->next;
+			if (curr_exp_var == NULL)
+				return (5);
+			curr_exp_var->var = ft_strdup(requested_var);
+			if (curr_exp_var->var == NULL)
+				return (6);
+			curr_exp_var->next = NULL;
+		}
+		else
+		{
+			free(preexisting_exp_var->var);
+			preexisting_exp_var->var = ft_strdup(requested_var); // free
+			if (preexisting_exp_var->var == NULL)
+				return (7);
+		}
+	}
+	return (0);
 }
 
 // ft_export() will immediately stop exporting if an invalid identifier is found
@@ -148,7 +184,6 @@ int	export_var(char *requested_var, char **envp, t_new_exports **new_exports)
 int	ft_export(char **argv, char **envp, t_new_exports **new_exports)
 {
 	int				i;
-	t_new_exports	*curr_exported_var;
 
 	if (argv[1] == NULL)
 	{
@@ -157,7 +192,7 @@ int	ft_export(char **argv, char **envp, t_new_exports **new_exports)
 	}
 	if (argv[1][0] == '-')
 	{
-		ft_dprintf(2, "minishell: export: %s: no options for this builtin\n", argv[i]);
+		ft_dprintf(2, "minishell: export: %s: no options for this builtin\n", argv[1]);
 		return (2);
 	}
 	i = 1;
@@ -173,7 +208,6 @@ int	ft_export(char **argv, char **envp, t_new_exports **new_exports)
 			i++;
 			continue ;
 		}
-		curr_exported_var = *new_exports;
 		if (export_var(argv[i], envp, new_exports) != 0)
 		{
 			ft_dprintf(2, "minishell: export: %s: failed to export variable\n");
@@ -184,7 +218,7 @@ int	ft_export(char **argv, char **envp, t_new_exports **new_exports)
 	return (0);
 }
 
-int	ft_env(char **argv, char **envp, t_new_exports *new_exports)
+int	ft_env(char **argv, char **envp, t_new_exports *new_exports, int last_arg_index)
 {
 	int	i;
 
@@ -195,12 +229,17 @@ int	ft_env(char **argv, char **envp, t_new_exports *new_exports)
 	}
 	i = 0;
 	while (envp[i] != NULL)
-		printf("%s\n", envp[i++]);
+	{
+		if (i != last_arg_index)
+			printf("%s\n", envp[i]);
+		i++;
+	}
 	while (new_exports != NULL)
 	{
 		printf("%s\n", new_exports->var);
 		new_exports = new_exports->next;
 	}
+	printf("%s\n", envp[last_arg_index]);
 	return (0);
 }
 
@@ -244,7 +283,8 @@ int	manage_builtin(t_cmd *command, t_exec_resources *exec_resources, t_prompt_re
 	// if (command->builtin == BUILTIN_UNSET)
 	// 	return (ft_unset(command->argv));
 	if (command->builtin == BUILTIN_ENV)
-		return (ft_env(command->argv, exec_resources->local_envp, exec_resources->new_exports));
+		return (ft_env(command->argv, exec_resources->local_envp,
+			exec_resources->new_exports, exec_resources->last_arg_index));
 	else
 		return (ft_exit(command->argv, exec_resources, prompt_resources));
 }

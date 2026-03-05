@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 18:13:02 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/05 12:45:04 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/05 16:49:32 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,8 @@ char	*get_local_env(char **local_envp, char *name)
 }
 
 // Unlike get_local_env(), this function will return the node containing
-// the requested variable, not simply a pointer to the value of the variable.
+// the requested variable, not simply a pointer to the value of the variable,
+// or NULL if the varaible is not found.
 t_new_exports	*get_local_exp(t_new_exports **new_exports, char *name)
 {
 	char			*formatted_name;
