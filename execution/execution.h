@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/05 16:49:57 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/06 16:50:00 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef struct s_new_exports
 {
 	char					*var;
 	struct s_new_exports	*next;
+	struct s_new_exports	*prev;
 }	t_new_exports;
 
 typedef struct s_exec_resources

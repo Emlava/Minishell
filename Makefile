@@ -1,7 +1,7 @@
 NAME = minishell
 LIBRARY = libft/libft.a
 CC = cc
-FLAGS = -Wall -Wextra -Werror #-fsanitize=address#,undefined -g -O0
+FLAGS = -Wall -Wextra -Werror -g -O0
 LINKING_FLAGS = -lreadline -lncurses
 OBJECTS = main.o execution/prompt_management/manage_prompt.o execution/env_management/env_utils.o execution/builtins_management/builtins.o \
 execution/path_management/define_non_reiterative_path.o execution/manage_executables.o parsing/lexer_helper.o parsing/lexer.o \
@@ -33,4 +33,4 @@ re: fclean all
 
 leak_check:
 	$(MAKE)
-	valgrind --leak-check=full --show-leak-kinds=all --suppressions=valgrind.supp -s ./minishell
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --suppressions=valgrind.supp -s ./minishell
