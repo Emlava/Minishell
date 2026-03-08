@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 15:28:05 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/21 15:39:55 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/08 15:39:03 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 int	ft_is_numeric_str(char *str)
 {
 	size_t	i;
-	
+
 	if (!str)
 		return (0);
 	i = 0;
 	if (str[i] == '-' || str[i] == '+')
 		i++;
-	while(ft_isdigit(str[i]))
+	while (ft_isdigit(str[i]))
 		i++;
 	if (str[i] == '\0')
 		return (1);
