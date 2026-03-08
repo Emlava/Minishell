@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/28 20:47:11 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/08 15:13:21 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/08 16:22:25 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ int	run_executable(char **argv, t_exec_resources *exec_resources,
 				ft_free_str_arr(path_list);
 				free(potential_path);
 				exit_cleanup(exec_resources, prompt_resources);
-				exit(errno + 128);
+				exit(127);
 			}
 			free(potential_path);
 			i++;
@@ -94,13 +94,7 @@ int	run_executable(char **argv, t_exec_resources *exec_resources,
 		waitpid(pid, &wstatus, 0);
 		if (WIFEXITED(wstatus))
 			return (WEXITSTATUS(wstatus));
-		// Do we check for signal termination?
-		// If so:
-		// if (WIFSIGNALED(wstatus))
-		// 	return (WTERMSIG(wstatus));
-		//
 		else
-			return (0); // Just to silence compilation warnings
-		//
+			return (WTERMSIG(wstatus) + 128);
 	}
 }
