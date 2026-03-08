@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/08 15:19:30 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/08 15:31:00 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ int	main(int ac, char *av[], char *envp[])
 	if (exec_resources.local_envp == NULL)
 		return (3);
 	check_essential_env_vars(&exec_resources);
-	get_var_indexes(&exec_resources); // CALL THIS AGAIN WHEN UNSETTING
+	get_var_indexes(&exec_resources);
 	exec_resources.new_exports = NULL;
 	exec_resources.prompt = NULL;
 	define_prompt(&exec_resources.prompt, &prompt_resources, exec_resources.local_envp, exec_resources.internal_pwd);
