@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:14:19 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/07 17:43:33 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/08 13:17:22 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -296,8 +296,8 @@ int	ft_env(char **argv, t_exec_resources *exec_resources)
 	i = 0;
 	while (exec_resources->local_envp[i] != NULL)
 	{
-		if ((i != exec_resources->last_arg_index // START HERE: last_arg_present is not initialized!!!!!
-			|| exec_resources->last_arg_present == false) && exec_resources->local_envp[i][0])
+		if ((exec_resources->last_arg_present == false
+			|| i != exec_resources->last_arg_index) && exec_resources->local_envp[i][0])
 			printf("%s\n", exec_resources->local_envp[i]);
 		i++;
 	}
