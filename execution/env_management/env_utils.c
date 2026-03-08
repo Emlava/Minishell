@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 18:13:02 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/06 17:45:34 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/08 13:08:36 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,42 +69,30 @@ void	get_var_indexes(t_exec_resources *exec_resources)
 	if (exec_resources->local_envp[i])
 	{
 		exec_resources->pwd_index = i;
-		if (exec_resources->pwd_present == false)
-			exec_resources->pwd_present = true;
+		exec_resources->pwd_present = true;
 	}
 	else
-	{
-		if (exec_resources->pwd_present == true)
-			exec_resources->pwd_present = false;
-	}
+		exec_resources->pwd_present = false;
 	i = 0;
 	while (exec_resources->local_envp[i] && ft_strncmp(exec_resources->local_envp[i], "OLDPWD=", 7))
 		i++;
 	if (exec_resources->local_envp[i])
 	{
 		exec_resources->oldpwd_index = i;
-		if (exec_resources->oldpwd_present == false)
-			exec_resources->oldpwd_present = true;
+		exec_resources->oldpwd_present = true;
 	}
 	else
-	{
-		if (exec_resources->oldpwd_present == true)
-			exec_resources->oldpwd_present = false;
-	}
+		exec_resources->oldpwd_present = false;
 	i = 0;
 	while (exec_resources->local_envp[i] && ft_strncmp(exec_resources->local_envp[i], "_=", 2))
 		i++;
 	if (exec_resources->local_envp[i])
 	{
 		exec_resources->last_arg_index = i;
-		if (exec_resources->last_arg_present == false)
-			exec_resources->last_arg_present = true;
+		exec_resources->last_arg_present = true;
 	}
 	else
-	{
-		if (exec_resources->last_arg_present == true)
-			exec_resources->last_arg_present = false;
-	}
+		exec_resources->last_arg_present = false;
 	return ;
 }
 

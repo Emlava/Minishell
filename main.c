@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/05 20:27:09 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/08 13:08:50 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,6 @@ int	main(int ac, char *av[], char *envp[])
 			exec_resources.user_input = readline(exec_resources.prompt); // free
 		else
 			exec_resources.user_input = readline("42_minishell: ");
-
 		//this is what check the exit if ctrl+D is pressed at any point
 		if (!exec_resources.user_input)
     	{
@@ -81,7 +80,6 @@ int	main(int ac, char *av[], char *envp[])
 			exit_cleanup(&exec_resources, &prompt_resources);
         	return (exec_resources.curr_exit_status); // Check
     	}
-		
 		add_history(exec_resources.user_input);
 		exec_resources.command_list =
 			start_parsing(exec_resources.user_input, exec_resources.local_envp);
