@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/22 16:24:14 by elara-va          #+#    #+#             */
-/*   Updated: 2026/02/28 18:20:05 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/08 14:38:49 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,11 +83,10 @@ static void	define_permanent_prompt_substr(t_prompt_resources *prompt_resources,
 	return ;
 }
 
-static void	get_working_dir(char **working_dir, char **envp, t_prompt_resources *prompt_resources)
+static void	get_working_dir(char **working_dir, t_prompt_resources *prompt_resources)
 {
 	char	*tmp_str;
 
-	*working_dir = get_local_env(envp, "PWD");
 	if (*working_dir == NULL)
 		return ;
 	if (ft_strnstr(*working_dir, prompt_resources->home, prompt_resources->home_len) != NULL
@@ -103,7 +102,7 @@ static void	get_working_dir(char **working_dir, char **envp, t_prompt_resources 
 	return ;
 }
 
-void	define_prompt(char **prompt, t_prompt_resources *prompt_resources, char **envp)
+void	define_prompt(char **prompt, t_prompt_resources *prompt_resources, char **envp, char *internal_pwd)
 {
 	char	*working_dir;
 	
@@ -124,7 +123,8 @@ void	define_prompt(char **prompt, t_prompt_resources *prompt_resources, char **e
 		free(*prompt);
 		*prompt = NULL;
 	}
-	get_working_dir(&working_dir, envp, prompt_resources);
+	working_dir = internal_pwd;
+	get_working_dir(&working_dir, prompt_resources);
 	if (working_dir == NULL)
 	{
 		if (prompt_resources->free_permanent_substr == true)

@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 14:18:15 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/02 20:39:26 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/08 14:26:11 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ static char	*manage_relative_path(char *requested_path, char *pwd)
 	char	*tmp_str;
 	char	*final_path;
 
-	tmp_str = ft_strjoin(pwd + 4, "/");
+	tmp_str = ft_strjoin(pwd, "/");
 	absolute_path = ft_strjoin(tmp_str, requested_path);
 	free(tmp_str);
 	final_path = manage_absolute_path(absolute_path);
@@ -133,7 +133,6 @@ char	*define_non_reiterative_path(char *requested_path, t_exec_resources *exec_r
 	char *home)
 {
 	char	*final_path;
-	char	*pwd;
 
 	if (ft_strncmp(requested_path, "/", 2) == 0)
 		return (ft_strdup(requested_path));
@@ -146,12 +145,6 @@ char	*define_non_reiterative_path(char *requested_path, t_exec_resources *exec_r
 	if (requested_path[0] == '/')
 		final_path = manage_absolute_path(requested_path); // free
 	else
-	{
-		if (exec_resources->pwd_present == true)
-			pwd = exec_resources->local_envp[exec_resources->pwd_index];
-		else
-			pwd = NULL;
-		final_path = manage_relative_path(requested_path, pwd); // free
-	}
+		final_path = manage_relative_path(requested_path, exec_resources->internal_pwd); // free
 	return (final_path);
 }

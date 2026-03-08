@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:14:19 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/08 13:17:22 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/08 14:44:20 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,15 +62,15 @@ int	ft_echo(char **argv)
 
 int	ft_cd(char **argv, t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
 {
-	char	*err_str;
-	char	*final_path;
+	char		*err_str;
+	char		*final_path;
 
 	if (argv[1] != NULL && strncmp(argv[1], ".", 2) == 0)
 		return (0);
 	if (argv[1] != NULL && argv[2] != NULL)
 	{
 		ft_dprintf(2, "minishell: cd: too many arguments\n");
-		return (1);
+		return (2);
 	}
 	if (argv[1] == NULL)
 		final_path = ft_strdup(prompt_resources->home); // free
@@ -79,7 +79,7 @@ int	ft_cd(char **argv, t_exec_resources *exec_resources, t_prompt_resources *pro
 	if (final_path == NULL)
 	{
 		ft_dprintf(2, "minishell: cd: failed to manage path because of a malloc() failure\n");
-		return (2);
+		return (3);
 	}
 	if (chdir(final_path) == -1)
 	{
@@ -90,13 +90,15 @@ int	ft_cd(char **argv, t_exec_resources *exec_resources, t_prompt_resources *pro
 			perror(err_str);
 			free(err_str);
 		}
-		return (3);
+		return (4);
 	}
+	free(exec_resources->internal_pwd);
+	exec_resources->internal_pwd = ft_strdup(final_path); // free
 	if (exec_resources->pwd_present == true)
 		update_local_env_paths(exec_resources, final_path);
 	free(final_path);
 	if (exec_resources->prompt != NULL)
-		define_prompt(&exec_resources->prompt, prompt_resources, exec_resources->local_envp);
+		define_prompt(&exec_resources->prompt, prompt_resources, exec_resources->local_envp, exec_resources->internal_pwd);
 	return (0);
 }
 
@@ -123,7 +125,7 @@ static int	valid_identifier_check(char *requested_var)
 	i = 0;
 	if (ft_isdigit(requested_var[i]) || requested_var[i] == '=')
 		return (1);
-	while (requested_var[i])
+	while (requested_var[i] && requested_var[i] != '=')
 	{
 		if (!ft_isalnum(requested_var[i]) && requested_var[i] != '_'
 			&& requested_var[i] != '=')

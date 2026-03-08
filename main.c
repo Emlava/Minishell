@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/08 13:08:50 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/08 15:19:30 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,12 @@ void	exit_cleanup(t_exec_resources *exec_resources, t_prompt_resources *prompt_r
 	free_cmds(exec_resources->command_list);
 	ft_free_str_arr(exec_resources->local_envp);
 	free_exp_vars(exec_resources->new_exports);
+	if (exec_resources->internal_pwd != NULL)
+		free(exec_resources->internal_pwd);
 	if (exec_resources->prompt != NULL)
-	{
 		free(exec_resources->prompt);
-		if (prompt_resources->free_permanent_substr == true)
-			free(prompt_resources->permanent_prompt_substr);
-	}
+	if (prompt_resources->free_permanent_substr == true)
+		free(prompt_resources->permanent_prompt_substr);
 	rl_clear_history();
 	// if piping or redirections: close fds
 	return ;
@@ -58,14 +58,22 @@ int	main(int ac, char *av[], char *envp[])
 		return (1);
 	}
 	(void)av;
+	exec_resources.internal_pwd = getenv("PWD");
+	if (!exec_resources.internal_pwd)
+	{
+		ft_dprintf(2, "It seems like you naughtily removed an essential value from the parent environment.\n");
+		ft_dprintf(2, "This shell won't run under those conditions.\n");
+		return (2);
+	}
+	exec_resources.internal_pwd = ft_strdup(exec_resources.internal_pwd); // free
 	exec_resources.local_envp = duplicate_environment(envp); // free
 	if (exec_resources.local_envp == NULL)
-		return (2);
+		return (3);
 	check_essential_env_vars(&exec_resources);
 	get_var_indexes(&exec_resources); // CALL THIS AGAIN WHEN UNSETTING
 	exec_resources.new_exports = NULL;
 	exec_resources.prompt = NULL;
-	define_prompt(&exec_resources.prompt, &prompt_resources, exec_resources.local_envp);
+	define_prompt(&exec_resources.prompt, &prompt_resources, exec_resources.local_envp, exec_resources.internal_pwd);
 	exec_resources.curr_exit_status = 0;
 	while (1)
 	{

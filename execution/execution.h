@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/06 16:50:00 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/08 14:34:14 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ typedef struct s_exec_resources
 	int				pwd_index;
 	int				oldpwd_index;
 	int				last_arg_index;
+	char			*internal_pwd;
 	char			*prompt;
 	char			*user_input;
 	t_cmd			*command_list;
@@ -57,7 +58,7 @@ typedef struct s_exec_resources
 }	t_exec_resources;
 
 // **** prompt_management/manage_prompt.c **** //
-void			define_prompt(char **prompt, t_prompt_resources *prompt_resources, char **envp);
+void			define_prompt(char **prompt, t_prompt_resources *prompt_resources, char **envp, char *internal_pwd);
 
 // **** env_management/env_utils.c **** //
 char			**duplicate_environment(char *envp[]);
