@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 18:13:02 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/08 13:08:36 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/12 22:13:46 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,10 @@ char	**duplicate_environment(char *envp[])
 	i = 0;
 	while (i < env_var_count)
 	{
-		if (ft_strncmp(envp[i], "_=", 2) == 0)
-			env_duplicate[i] = ft_strdup("_=]"); // free
-		else
+		if (ft_strncmp(envp[i], "_=", 2) != 0)
 			env_duplicate[i] = ft_strdup(envp[i]); // free each
+		else
+			env_duplicate[i] = ft_strdup("_=./minishell"); // free
 		if (env_duplicate[i] == NULL)
 		{
 			ft_free_str_arr(env_duplicate);

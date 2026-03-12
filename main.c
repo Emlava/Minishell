@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/08 15:31:00 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/12 22:02:33 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ void	free_exp_vars(t_new_exports *new_exports)
 
 void	exit_cleanup(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
 {
-	free(exec_resources->user_input);
 	free_cmds(exec_resources->command_list);
 	ft_free_str_arr(exec_resources->local_envp);
 	free_exp_vars(exec_resources->new_exports);
@@ -81,6 +80,7 @@ int	main(int ac, char *av[], char *envp[])
 			exec_resources.user_input = readline(exec_resources.prompt); // free
 		else
 			exec_resources.user_input = readline("42_minishell: ");
+
 		//this is what check the exit if ctrl+D is pressed at any point
 		if (!exec_resources.user_input)
     	{
@@ -88,24 +88,42 @@ int	main(int ac, char *av[], char *envp[])
 			exit_cleanup(&exec_resources, &prompt_resources);
         	return (exec_resources.curr_exit_status); // Check
     	}
+		
 		add_history(exec_resources.user_input);
 		exec_resources.command_list =
 			start_parsing(exec_resources.user_input, exec_resources.local_envp);
+		free(exec_resources.user_input);
 		curr_command_node = exec_resources.command_list;
-
-		while (curr_command_node != NULL)
+		if (curr_command_node == NULL)
+			continue ;
+		if (curr_command_node->next == NULL)
 		{
-			// manage_piping_and_redirection(curr_command_node);
+			// Manage possible redirections
 			if (curr_command_node->builtin)
 				exec_resources.curr_exit_status = manage_builtin(curr_command_node, &exec_resources, &prompt_resources);	
-			if (curr_command_node->argv[0] != NULL && exec_resources.last_arg_present == true)
+			if (exec_resources.last_arg_present == true)
 				update_local_env_last_arg(&exec_resources, curr_command_node->argv);
 			if (curr_command_node->builtin == false)
 				exec_resources.curr_exit_status = run_executable(curr_command_node->argv, &exec_resources,
 					&prompt_resources);
-			curr_command_node = curr_command_node->next;
 		}
-		free(exec_resources.user_input);
+		else
+		{
+			while (curr_command_node != NULL)
+			{
+				// Pipe
+				// Manage possible redirections
+				// Fork (Create linked list of pids)
+				if (curr_command_node->builtin)
+					exec_resources.curr_exit_status = manage_builtin(curr_command_node, &exec_resources, &prompt_resources);	
+				if (exec_resources.last_arg_present == true && curr_command_node->next == NULL)
+					update_local_env_last_arg(&exec_resources, curr_command_node->argv);
+				if (curr_command_node->builtin == false)
+					exec_resources.curr_exit_status = run_executable(curr_command_node->argv, &exec_resources,
+						&prompt_resources);
+				curr_command_node = curr_command_node->next;
+			}
+		}
 		free_cmds(exec_resources.command_list);
 	}
 	return (0);
