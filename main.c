@@ -6,7 +6,7 @@
 /*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/13 15:29:28 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/03/13 16:41:01 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,6 +223,7 @@ int	main(int ac, char *av[], char *envp[])
 	get_var_indexes(&exec_resources);
 	exec_resources.new_exports = NULL;
 	exec_resources.prompt = NULL;
+	exec_resources.command_list = NULL;
 	define_prompt(&exec_resources.prompt, &prompt_resources, exec_resources.local_envp, exec_resources.internal_pwd);
 	exec_resources.curr_exit_status = 0;
 	while (1)
