@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 18:13:02 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/12 22:13:46 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/13 23:57:47 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,18 +141,18 @@ t_new_exports	*get_local_exp(t_new_exports **new_exports, char *name)
 	return (curr_exp_var);
 }
 
-void	update_local_env_paths(t_exec_resources *exec_resources, char *new_pwd)
+void	update_local_env_paths(t_exec_resources *exec_resources, char *old_internal_pwd)
 {
 	if (exec_resources->pwd_present == true)
 	{
 		free(exec_resources->local_envp[exec_resources->pwd_index]);
-		exec_resources->local_envp[exec_resources->pwd_index] = ft_strjoin("PWD=", new_pwd); // This is freed when freeing local_envp	
+		exec_resources->local_envp[exec_resources->pwd_index] = ft_strjoin("PWD=", exec_resources->internal_pwd); // This is freed when freeing local_envp	
 	}
 	if (exec_resources->oldpwd_present == true)
 	{
 		free(exec_resources->local_envp[exec_resources->oldpwd_index]);
 		exec_resources->local_envp[exec_resources->oldpwd_index]
-			= ft_strjoin("OLDPWD=", exec_resources->local_envp[exec_resources->pwd_index] + 4); // This is freed when freeing local_envp	
+			= ft_strjoin("OLDPWD=", old_internal_pwd); // This is freed when freeing local_envp	
 	}
 	return ;
 }

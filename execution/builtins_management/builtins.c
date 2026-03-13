@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:14:19 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/13 12:57:06 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/13 23:56:20 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ int	ft_cd(char **argv, t_exec_resources *exec_resources, t_prompt_resources *pro
 {
 	char		*err_str;
 	char		*final_path;
+	char		*old_internal_pwd;
 
 	if (argv[1] != NULL && strncmp(argv[1], ".", 2) == 0)
 		return (0);
@@ -74,6 +75,22 @@ int	ft_cd(char **argv, t_exec_resources *exec_resources, t_prompt_resources *pro
 	}
 	if (argv[1] == NULL)
 		final_path = ft_strdup(prompt_resources->home); // free
+	else if (argv[1][0] == '-')
+	{
+		if (argv[1][1] != '\0')
+		{
+			ft_dprintf(2, "minishell: %s: invalid option\n", argv[1]);
+			return (2);
+		}
+		final_path = get_local_env(exec_resources->local_envp, "OLDPWD");
+		if (!final_path)
+		{
+			ft_dprintf(2, "minishell: cd: OLDPWD not set\n");
+			return (1);
+		}
+		final_path = ft_strdup(final_path);
+		printf("%s\n", final_path);
+	}
 	else
 		final_path = define_non_reiterative_path(argv[1], exec_resources, prompt_resources->home);
 	if (final_path == NULL)
@@ -92,10 +109,10 @@ int	ft_cd(char **argv, t_exec_resources *exec_resources, t_prompt_resources *pro
 		}
 		return (4);
 	}
-	free(exec_resources->internal_pwd);
+	old_internal_pwd = exec_resources->internal_pwd;
 	exec_resources->internal_pwd = ft_strdup(final_path); // free
-	if (exec_resources->pwd_present == true)
-		update_local_env_paths(exec_resources, final_path);
+	update_local_env_paths(exec_resources, old_internal_pwd);
+	free(old_internal_pwd);
 	free(final_path);
 	if (exec_resources->prompt != NULL)
 		define_prompt(&exec_resources->prompt, prompt_resources, exec_resources->local_envp, exec_resources->internal_pwd);
