@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:14:19 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/08 14:44:20 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/13 12:57:06 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -318,7 +318,6 @@ int	ft_exit(char **argv, t_exec_resources *exec_resources, t_prompt_resources *p
 {
 	int	exit_status;
 
-	// if piping was implemented, we manage things differently
 	printf("exit\n");
 	if (argv[1] != NULL)
 	{

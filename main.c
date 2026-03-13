@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/12 22:02:33 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/13 14:37:47 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,19 @@ void	free_exp_vars(t_new_exports *new_exports)
 	return ;
 }
 
+void	free_pid_list(t_pids *pid_list)
+{
+	t_pids	*tmp;
+	
+	while (pid_list)
+	{
+		tmp = pid_list;
+		pid_list = pid_list->next;
+		free(tmp);
+	}
+	return ;
+}
+
 void	exit_cleanup(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
 {
 	free_cmds(exec_resources->command_list);
@@ -44,11 +57,128 @@ void	exit_cleanup(t_exec_resources *exec_resources, t_prompt_resources *prompt_r
 	return ;
 }
 
+void	run_simple_command(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
+{
+	t_cmd	*command_node;
+	pid_t	pid;
+	int		wstatus;
+
+	command_node = exec_resources->command_list;
+	// Manage possible redirections
+	if (command_node->builtin)
+		exec_resources->curr_exit_status = manage_builtin(command_node, exec_resources, prompt_resources);	
+	if (exec_resources->last_arg_present == true)
+		update_local_env_last_arg(exec_resources, command_node->argv);
+	if (command_node->builtin == false)
+	{
+		pid = fork();
+		if (pid == -1)
+		{
+			ft_dprintf(2, "minishell: fork() failure in run_compound_command()\n");
+			return ;
+		}
+		if (pid == 0)
+			run_executable(command_node->argv, exec_resources, prompt_resources);
+		wait(&wstatus);
+		if (WIFEXITED(wstatus))
+			exec_resources->curr_exit_status = (WEXITSTATUS(wstatus));
+		else
+			exec_resources->curr_exit_status = (WTERMSIG(wstatus) + 128);
+	}
+	return ;
+}
+
+static void	run_command_in_subshell(t_cmd *command_node, t_exec_resources *exec_resources,
+	t_prompt_resources *prompt_resources)
+{
+	int	exit_status;
+
+	exit_status = 0;
+	if (command_node->builtin)
+		exit_status = manage_builtin(command_node, exec_resources, prompt_resources);	
+	if (exec_resources->last_arg_present == true && command_node->next == NULL)
+		update_local_env_last_arg(exec_resources, command_node->argv);
+	if (command_node->builtin == false)
+		run_executable(command_node->argv, exec_resources, prompt_resources);
+	exit_cleanup(exec_resources, prompt_resources);
+	exit(exit_status);
+}
+
+// Returns the exit status of the last child process.
+static int	wait_for_all_children(t_pids *pid_list)
+{
+	int	wstatus;
+
+	while (pid_list != NULL)
+	{
+		waitpid(pid_list->pid, &wstatus, 0);
+		pid_list = pid_list->next;
+	}
+	if (WIFEXITED(wstatus))
+		return (WEXITSTATUS(wstatus));
+	else
+		return (WTERMSIG(wstatus) + 128);
+}
+
+void	run_compound_command(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
+{
+	t_cmd	*command_node;
+	t_pids	*pid_list;
+	t_pids	*pid_node;
+
+
+	command_node = exec_resources->command_list;
+	pid_list = malloc(sizeof(t_pids));
+	if (!pid_list)
+	{
+		ft_dprintf(2, "minishell: malloc() failure in run_compound_command()\n");
+		return ;
+	}
+	pid_list->next = NULL;
+	pid_node = pid_list;
+	while (command_node != NULL)
+	{
+		// Pipe
+		// Manage possible redirections
+		// Fork (Create linked list of pids)
+		pid_node->pid = fork();
+		if (pid_node->pid == -1)
+		{
+			ft_dprintf(2, "minishell: fork() failure in run_compound_command()\n");
+			wait_for_all_children(pid_list);
+			free_pid_list(pid_list);
+			return ;
+		}
+		if (pid_node->pid == 0)
+		{
+			free_pid_list(pid_list);
+			run_command_in_subshell(command_node, exec_resources, prompt_resources);
+		}
+		command_node = command_node->next;
+		if (command_node != NULL)
+		{
+			pid_node->next = malloc(sizeof(t_pids));
+			if (!pid_node)
+			{
+				ft_dprintf(2, "minishell: malloc() failure in run_compound_command()\n");
+				wait_for_all_children(pid_list);
+				free_pid_list(pid_list);
+				return ;
+			}
+			pid_node = pid_node->next;
+			pid_node->next = NULL;
+		}
+	}
+	// Here we waitpid() in a loop, going through the list of pids.
+	// We update curr_exit_status only when reaching the last node.
+	exec_resources->curr_exit_status = wait_for_all_children(pid_list);
+	free_pid_list(pid_list);
+}
+
 int	main(int ac, char *av[], char *envp[])
 {
 	t_prompt_resources	prompt_resources;
 	t_exec_resources	exec_resources;
-	t_cmd				*curr_command_node;
 	
 	init_signals();
 	if (ac > 1)
@@ -93,44 +223,13 @@ int	main(int ac, char *av[], char *envp[])
 		exec_resources.command_list =
 			start_parsing(exec_resources.user_input, exec_resources.local_envp);
 		free(exec_resources.user_input);
-		curr_command_node = exec_resources.command_list;
-		if (curr_command_node == NULL)
+		if (exec_resources.command_list == NULL)
 			continue ;
-		if (curr_command_node->next == NULL)
-		{
-			// Manage possible redirections
-			if (curr_command_node->builtin)
-				exec_resources.curr_exit_status = manage_builtin(curr_command_node, &exec_resources, &prompt_resources);	
-			if (exec_resources.last_arg_present == true)
-				update_local_env_last_arg(&exec_resources, curr_command_node->argv);
-			if (curr_command_node->builtin == false)
-				exec_resources.curr_exit_status = run_executable(curr_command_node->argv, &exec_resources,
-					&prompt_resources);
-		}
+		if (exec_resources.command_list->next == NULL)
+			run_simple_command(&exec_resources, &prompt_resources);
 		else
-		{
-			while (curr_command_node != NULL)
-			{
-				// Pipe
-				// Manage possible redirections
-				// Fork (Create linked list of pids)
-				if (curr_command_node->builtin)
-					exec_resources.curr_exit_status = manage_builtin(curr_command_node, &exec_resources, &prompt_resources);	
-				if (exec_resources.last_arg_present == true && curr_command_node->next == NULL)
-					update_local_env_last_arg(&exec_resources, curr_command_node->argv);
-				if (curr_command_node->builtin == false)
-					exec_resources.curr_exit_status = run_executable(curr_command_node->argv, &exec_resources,
-						&prompt_resources);
-				curr_command_node = curr_command_node->next;
-			}
-		}
+			run_compound_command(&exec_resources, &prompt_resources);
 		free_cmds(exec_resources.command_list);
 	}
 	return (0);
 }
-
-// exec_resources to free or clear:
-//
-// -local_envp and each *local_envp, managed
-// -user_input, managed
-// -history, managed

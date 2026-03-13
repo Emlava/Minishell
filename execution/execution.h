@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/08 14:34:14 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/13 14:28:03 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,12 @@ typedef struct s_exec_resources
 	int				curr_exit_status;
 }	t_exec_resources;
 
+typedef struct s_pids
+{
+	pid_t			pid;
+	struct s_pids	*next;
+}	t_pids;
+
 // **** prompt_management/manage_prompt.c **** //
 void			define_prompt(char **prompt, t_prompt_resources *prompt_resources, char **envp, char *internal_pwd);
 
@@ -77,7 +83,7 @@ char			*define_non_reiterative_path(char *requested_path, t_exec_resources *exec
 					char *home);
 
 // **** execution/manage_executables.c **** //
-int				run_executable(char **argv, t_exec_resources *exec_resources,
+void			run_executable(char **argv, t_exec_resources *exec_resources,
 					t_prompt_resources *prompt_resources);
 
 // **** main.c **** //
