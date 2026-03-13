@@ -6,7 +6,7 @@
 /*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 16:25:10 by hudescam          #+#    #+#             */
-/*   Updated: 2026/03/04 15:59:24 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/03/13 15:32:45 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,14 +57,15 @@
 // 	}
 // }
 
-t_cmd	*start_parsing(char *line, char **envp)
+t_cmd	*start_parsing(char *line, char **envp, struct s_new_exports *ne,
+		int exit_status)
 {
 	t_token	*tokens;
 	t_cmd	*cmds;
 
 	if (!line)
 		return (NULL);
-	tokens = lexer(line, envp);
+	tokens = lexer(line, envp, ne, exit_status);
 	if (!tokens)
 		return (NULL);
 	if (!check_syntax(tokens))

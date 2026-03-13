@@ -6,7 +6,7 @@
 /*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 19:41:52 by hudescam          #+#    #+#             */
-/*   Updated: 2026/03/04 15:59:24 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/03/13 15:32:45 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,17 @@ void	token_add_back(t_token **lst, t_token *new)
 	tmp->next = new;
 }
 
-t_token	*lexer(char *line, char **envp)
+t_token	*lexer(char *line, char **envp, struct s_new_exports *ne,
+		int exit_status)
 {
-	t_token	*tokens;
-	int		i;
+	t_token		*tokens;
+	int			i;
+	t_parse_ctx	ctx;
 
+	ctx.envp = envp;
+	ctx.exit_status = exit_status;
+	ctx.new_exports = ne;
+	ctx.quoted = NULL;
 	tokens = NULL;
 	i = 0;
 	while (line[i])
@@ -58,7 +64,7 @@ t_token	*lexer(char *line, char **envp)
 			handle_operator(line, &i, &tokens);
 		else
 		{
-			if (!handle_word(line, &i, &tokens, envp))
+			if (!handle_word(line, &i, &tokens, &ctx))
 				return (NULL);
 		}
 	}

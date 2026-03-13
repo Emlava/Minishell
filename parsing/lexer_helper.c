@@ -58,17 +58,15 @@ void	handle_output_redir(char *line, int *i, t_token **tokens)
 	}
 }
 
-int	handle_word(char *line, int *i, t_token **tokens, char **envp)
+int	handle_word(char *line, int *i, t_token **tokens, t_parse_ctx *ctx)
 {
 	char		*word;
 	int			quoted;
 	t_token		*new;
-	t_parse_ctx	ctx;
 
 	quoted = 0;
-	ctx.envp = envp;
-	ctx.quoted = &quoted;
-	word = read_word(line, i, &ctx);
+	ctx->quoted = &quoted;
+	word = read_word(line, i, ctx);
 	if (!word)
 		return (0);
 	new = token_new(TOKEN_WORD, word);

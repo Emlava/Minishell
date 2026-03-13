@@ -11,6 +11,24 @@
 /* ************************************************************************** */
 
 #include "parsing.h"
+#include "../execution/execution.h"
+
+char	*get_var_value(char *var, t_parse_ctx *ctx)
+{
+	char			*value;
+	t_new_exports	*exp_node;
+
+	value = get_local_env(ctx->envp, var);
+	if (!value)
+	{
+		exp_node = get_local_exp(&(ctx->new_exports), var);
+		if (exp_node)
+			value = exp_node->var + ft_strlen(var) + 1;
+	}
+	if (!value)
+		return (ft_strdup(""));
+	return (ft_strdup(value));
+}
 
 char	*process_double_content(char *word, char *tmp, t_parse_ctx *ctx)
 {

@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/13 14:37:47 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/13 15:29:28 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	g_exit_status = 0;
 
 void	free_exp_vars(t_new_exports *new_exports)
 {
@@ -79,11 +77,20 @@ void	run_simple_command(t_exec_resources *exec_resources, t_prompt_resources *pr
 		}
 		if (pid == 0)
 			run_executable(command_node->argv, exec_resources, prompt_resources);
+		signal(SIGINT, SIG_IGN);
+        signal(SIGQUIT, SIG_IGN);
 		wait(&wstatus);
+		init_signals();
 		if (WIFEXITED(wstatus))
 			exec_resources->curr_exit_status = (WEXITSTATUS(wstatus));
 		else
+		{
+			if (WTERMSIG(wstatus) == SIGINT)
+				write(1, "\n", 1);
+			else if (WTERMSIG(wstatus) == SIGQUIT)
+				write(1, "Quit (core dumped)\n", 19);
 			exec_resources->curr_exit_status = (WTERMSIG(wstatus) + 128);
+		}
 	}
 	return ;
 }
@@ -93,6 +100,8 @@ static void	run_command_in_subshell(t_cmd *command_node, t_exec_resources *exec_
 {
 	int	exit_status;
 
+	signal(SIGINT, SIG_DFL);
+    signal(SIGQUIT, SIG_DFL);
 	exit_status = 0;
 	if (command_node->builtin)
 		exit_status = manage_builtin(command_node, exec_resources, prompt_resources);	
@@ -117,7 +126,16 @@ static int	wait_for_all_children(t_pids *pid_list)
 	if (WIFEXITED(wstatus))
 		return (WEXITSTATUS(wstatus));
 	else
+	{
+		if (WIFSIGNALED(wstatus))
+		{
+			if (WTERMSIG(wstatus) == SIGINT)
+				write(1, "\n", 1);
+			else if (WTERMSIG(wstatus) == SIGQUIT)
+				write(1, "Quit (core dumped)\n", 19);
+		}
 		return (WTERMSIG(wstatus) + 128);
+	}
 }
 
 void	run_compound_command(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
@@ -171,7 +189,10 @@ void	run_compound_command(t_exec_resources *exec_resources, t_prompt_resources *
 	}
 	// Here we waitpid() in a loop, going through the list of pids.
 	// We update curr_exit_status only when reaching the last node.
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	exec_resources->curr_exit_status = wait_for_all_children(pid_list);
+	init_signals();
 	free_pid_list(pid_list);
 }
 
@@ -211,6 +232,11 @@ int	main(int ac, char *av[], char *envp[])
 		else
 			exec_resources.user_input = readline("42_minishell: ");
 
+		if (g_signal != 0)
+		{
+			exec_resources.curr_exit_status = g_signal;
+			g_signal = 0;
+		}
 		//this is what check the exit if ctrl+D is pressed at any point
 		if (!exec_resources.user_input)
     	{
@@ -221,7 +247,8 @@ int	main(int ac, char *av[], char *envp[])
 		
 		add_history(exec_resources.user_input);
 		exec_resources.command_list =
-			start_parsing(exec_resources.user_input, exec_resources.local_envp);
+			start_parsing(exec_resources.user_input, exec_resources.local_envp,\
+			exec_resources.new_exports, exec_resources.curr_exit_status);
 		free(exec_resources.user_input);
 		if (exec_resources.command_list == NULL)
 			continue ;

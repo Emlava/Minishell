@@ -6,7 +6,7 @@
 /*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 19:38:36 by hudescam          #+#    #+#             */
-/*   Updated: 2026/03/04 16:04:36 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/03/13 16:20:05 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 # include <signal.h>
 # include <readline/readline.h>
 # include "../libft/libft.h"
+
+extern int	g_signal;
 
 typedef enum e_token_type
 {
@@ -75,22 +77,24 @@ typedef struct s_cmd
 
 typedef struct s_parse_ctx
 {
-	char	**envp;
-	int		*quoted;
+	char					**envp;
+	struct s_new_exports	*new_exports;
+	int						*quoted;
+	int						exit_status;
 }	t_parse_ctx;
-
-extern int	g_exit_status;
 
 char			*read_word(char *line, int *i, t_parse_ctx *ctx);
 t_token			*token_new(t_token_type type, char *value);
 void			token_add_back(t_token **lst, t_token *new);
-t_token			*lexer(char *line, char **envp);
+t_token			*lexer(char *line, char **envp,
+					struct s_new_exports *ne, int exit_status);
 
 int				is_operator(char c);
 void			handle_operator(char *line, int *i, t_token **tokens);
 void			handle_input_redir(char *line, int *i, t_token **tokens);
 void			handle_output_redir(char *line, int *i, t_token **tokens);
-int				handle_word(char *line, int *i, t_token **tokens, char **envp);
+int				handle_word(char *line, int *i, t_token **tk,
+					t_parse_ctx *ctx);
 
 int				ft_isspace(int c);
 char			*ft_strjoin_free(char *s1, char *s2);
@@ -112,6 +116,7 @@ char			*process_double_content(char *word, char *tmp,
 					t_parse_ctx *ctx);
 char			*handle_quote_case(char *word, char *line, int *i,
 					t_parse_ctx *ctx);
+char			*get_var_value(char *var, t_parse_ctx *ctx);
 char			*handle_word_char(char *word, char *line, int *i,
 					t_parse_ctx *ctx);
 
@@ -127,6 +132,7 @@ int				check_syntax(t_token *tokens);
 void			sigint_handler(int sig);
 void			init_signals(void);
 
-t_cmd			*start_parsing(char *line, char **envp);
+t_cmd			*start_parsing(char *line, char **envp,
+					struct s_new_exports *ne, int exit_status);
 
 #endif

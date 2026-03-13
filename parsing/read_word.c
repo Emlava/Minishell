@@ -6,7 +6,7 @@
 /*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 10:40:42 by hudescam          #+#    #+#             */
-/*   Updated: 2026/03/04 16:16:15 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/03/13 15:32:45 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ char	*append_variable(char *word, char *line, int *i, t_parse_ctx *ctx)
 	(*i)++;
 	if (line[*i] == '?')
 	{
-		value = ft_itoa(g_exit_status);
+		value = ft_itoa(ctx->exit_status);
 		(*i)++;
 		return (ft_strjoin_free(word, value));
 	}
@@ -51,12 +51,8 @@ char	*append_variable(char *word, char *line, int *i, t_parse_ctx *ctx)
 	while (ft_isalnum(line[*i]) || line[*i] == '_')
 		(*i)++;
 	var = ft_substr(line, start, *i - start);
-	value = get_local_env(ctx->envp, var);
+	value = get_var_value(var, ctx);
 	free(var);
-	if (!value)
-		value = ft_strdup("");
-	else
-		value = ft_strdup(value);
 	return (ft_strjoin_free(word, value));
 }
 
