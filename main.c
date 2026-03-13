@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
+/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/13 16:41:01 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/03/13 17:13:21 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,9 +86,9 @@ void	run_simple_command(t_exec_resources *exec_resources, t_prompt_resources *pr
 		else
 		{
 			if (WTERMSIG(wstatus) == SIGINT)
-				write(1, "\n", 1);
+				write(2, "\n", 1);
 			else if (WTERMSIG(wstatus) == SIGQUIT)
-				write(1, "Quit (core dumped)\n", 19);
+				ft_dprintf(2, "Quit (core dumped)\n");
 			exec_resources->curr_exit_status = (WTERMSIG(wstatus) + 128);
 		}
 	}
@@ -130,9 +130,9 @@ static int	wait_for_all_children(t_pids *pid_list)
 		if (WIFSIGNALED(wstatus))
 		{
 			if (WTERMSIG(wstatus) == SIGINT)
-				write(1, "\n", 1);
+				write(2, "\n", 1);
 			else if (WTERMSIG(wstatus) == SIGQUIT)
-				write(1, "Quit (core dumped)\n", 19);
+				ft_dprintf(2, "Quit (core dumped)\n");
 		}
 		return (WTERMSIG(wstatus) + 128);
 	}
