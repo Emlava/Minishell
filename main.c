@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/13 17:13:21 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/13 18:49:48 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,7 @@ void	run_compound_command(t_exec_resources *exec_resources, t_prompt_resources *
 	t_cmd	*command_node;
 	t_pids	*pid_list;
 	t_pids	*pid_node;
-
+	int		pipe_fd[2];
 
 	command_node = exec_resources->command_list;
 	pid_list = malloc(sizeof(t_pids));
@@ -157,8 +157,8 @@ void	run_compound_command(t_exec_resources *exec_resources, t_prompt_resources *
 	while (command_node != NULL)
 	{
 		// Pipe
+		pipe(pipe_fd);
 		// Manage possible redirections
-		// Fork (Create linked list of pids)
 		pid_node->pid = fork();
 		if (pid_node->pid == -1)
 		{
@@ -169,6 +169,16 @@ void	run_compound_command(t_exec_resources *exec_resources, t_prompt_resources *
 		}
 		if (pid_node->pid == 0)
 		{
+			if (command_node->next != NULL) // LEFT OFF HERE
+			{
+				dup2(pipe_fd[1], STDOUT_FILENO);
+				close(pipe_fd[1]);
+			}
+			if (pid_node->pid != pid_list->pid)
+			{
+				dup2(pipe_fd[0], STDIN_FILENO);
+				close(pipe_fd[0]);
+			}
 			free_pid_list(pid_list);
 			run_command_in_subshell(command_node, exec_resources, prompt_resources);
 		}
@@ -187,8 +197,6 @@ void	run_compound_command(t_exec_resources *exec_resources, t_prompt_resources *
 			pid_node->next = NULL;
 		}
 	}
-	// Here we waitpid() in a loop, going through the list of pids.
-	// We update curr_exit_status only when reaching the last node.
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
 	exec_resources->curr_exit_status = wait_for_all_children(pid_list);
@@ -223,11 +231,11 @@ int	main(int ac, char *av[], char *envp[])
 	get_var_indexes(&exec_resources);
 	exec_resources.new_exports = NULL;
 	exec_resources.prompt = NULL;
-	exec_resources.command_list = NULL;
 	define_prompt(&exec_resources.prompt, &prompt_resources, exec_resources.local_envp, exec_resources.internal_pwd);
 	exec_resources.curr_exit_status = 0;
 	while (1)
 	{
+		exec_resources.command_list = NULL;
 		if (exec_resources.prompt != NULL)
 			exec_resources.user_input = readline(exec_resources.prompt); // free
 		else
