@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/13 14:28:03 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/14 19:05:46 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,9 +57,18 @@ typedef struct s_exec_resources
 	int				curr_exit_status;
 }	t_exec_resources;
 
+typedef struct s_pipes
+{
+	int				pipe[2];
+	struct s_pipes	*next;
+}	t_pipes;
+
 typedef struct s_pids
 {
 	pid_t			pid;
+	int				child_nbr;
+	int				pipe_r_end;
+	int				pipe_w_end;
 	struct s_pids	*next;
 }	t_pids;
 
@@ -82,11 +91,17 @@ int				manage_builtin(t_cmd *command, t_exec_resources *exec_resources, t_prompt
 char			*define_non_reiterative_path(char *requested_path, t_exec_resources *exec_resources,
 					char *home);
 
-// **** execution/manage_executables.c **** //
+// **** manage_executables.c **** //
 void			run_executable(char **argv, t_exec_resources *exec_resources,
 					t_prompt_resources *prompt_resources);
 
+// **** cleaning/cleaning_functions.c **** //
+void			free_exp_vars(t_new_exports *new_exports);
+					
 // **** main.c **** //
+void			free_exp_vars(t_new_exports *new_exports);
+void			free_pipe_list(t_pipes *pipe_list, bool close_fds);
+void			free_pid_list(t_pids *pid_list);
 void			exit_cleanup(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources);
 
 #endif

@@ -4,9 +4,9 @@ CC = cc
 FLAGS = -Wall -Wextra -Werror -g -O0
 LINKING_FLAGS = -lreadline -lncurses
 OBJECTS = main.o execution/prompt_management/manage_prompt.o execution/env_management/env_utils.o execution/builtins_management/builtins.o \
-execution/path_management/define_non_reiterative_path.o execution/manage_executables.o parsing/lexer_helper.o parsing/lexer.o \
-parsing/start_parsing.o parsing/parse_token.o parsing/read_word.o parsing/signals.o parsing/syntax.o parsing/utils.o \
-parsing/parse_token_helper.o parsing/read_word_helper.o
+execution/path_management/define_non_reiterative_path.o execution/manage_executables.o execution/cleaning/cleaning_functions.o \
+parsing/lexer_helper.o parsing/lexer.o parsing/start_parsing.o parsing/parse_token.o parsing/read_word.o parsing/signals.o parsing/syntax.o \
+parsing/utils.o parsing/parse_token_helper.o parsing/read_word_helper.o
 
 .PHONY: all clean fclean re leak_check
 

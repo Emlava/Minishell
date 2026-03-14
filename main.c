@@ -6,54 +6,11 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/13 18:49:48 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/14 19:47:02 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	free_exp_vars(t_new_exports *new_exports)
-{
-	t_new_exports	*tmp;
-	
-	while (new_exports)
-	{
-		tmp = new_exports;
-		free(new_exports->var);
-		new_exports = new_exports->next;
-		free(tmp);
-	}
-	return ;
-}
-
-void	free_pid_list(t_pids *pid_list)
-{
-	t_pids	*tmp;
-	
-	while (pid_list)
-	{
-		tmp = pid_list;
-		pid_list = pid_list->next;
-		free(tmp);
-	}
-	return ;
-}
-
-void	exit_cleanup(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
-{
-	free_cmds(exec_resources->command_list);
-	ft_free_str_arr(exec_resources->local_envp);
-	free_exp_vars(exec_resources->new_exports);
-	if (exec_resources->internal_pwd != NULL)
-		free(exec_resources->internal_pwd);
-	if (exec_resources->prompt != NULL)
-		free(exec_resources->prompt);
-	if (prompt_resources->free_permanent_substr == true)
-		free(prompt_resources->permanent_prompt_substr);
-	rl_clear_history();
-	// if piping or redirections: close fds
-	return ;
-}
 
 void	run_simple_command(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
 {
@@ -95,6 +52,81 @@ void	run_simple_command(t_exec_resources *exec_resources, t_prompt_resources *pr
 	return ;
 }
 
+
+//
+static int	initialize_pipe_node(t_pipes **pipe_node)
+{
+	*pipe_node = malloc(sizeof(t_pipes));
+	if (!*pipe_node)
+		return (1);
+	(*pipe_node)->next = NULL;
+	if (pipe((*pipe_node)->pipe) == -1)
+		return (2);
+	return (0);
+}
+
+static int	initialize_pid_node(t_pids **pid_node, int child_count)
+{
+	*pid_node = malloc(sizeof(t_pids));
+	if (!*pid_node)
+		return (1);
+	(*pid_node)->pid = -1;
+	(*pid_node)->child_nbr = child_count;
+	(*pid_node)->next = NULL;
+	return (0);
+}
+
+static int	create_pipe_and_pib_lists(t_pipes **pipe_list, t_pids **pid_list, int nbr_of_children)
+{
+	int		child_count;
+	t_pipes	*pipe_node;
+	t_pids	*pid_node;
+
+	child_count = 1;
+	if (initialize_pipe_node(pipe_list) != 0)
+		return (1);
+	if (initialize_pid_node(pid_list, child_count) != 0)
+		return (2);
+	pipe_node = *pipe_list;
+	pid_node = *pid_list;
+	while (++child_count <= nbr_of_children)
+	{
+		if (child_count < nbr_of_children)
+		{
+			if (initialize_pipe_node(pipe_node) != 0)
+			{
+				free_pipe_list(*pipe_list, true);
+				free_pid_list(*pid_list);
+				return (1);
+			}
+			pipe_node = pipe_node->next;
+		}
+		if (initialize_pid_node(pid_node, child_count) != 0)
+		{
+			free_pipe_list(*pipe_list, true);
+			free_pid_list(*pid_list);
+			return (2);
+		}
+		pid_node = pid_node->next;
+	}
+	return (0);
+}
+//
+
+
+static int	count_commands(t_cmd *command_list)
+{
+	int	command_count;
+
+	command_count = 0;
+	while (command_list != NULL)
+	{
+		command_count++;
+		command_list = command_list->next;
+	}
+	return (command_count);
+}
+
 static void	run_command_in_subshell(t_cmd *command_node, t_exec_resources *exec_resources,
 	t_prompt_resources *prompt_resources)
 {
@@ -118,7 +150,7 @@ static int	wait_for_all_children(t_pids *pid_list)
 {
 	int	wstatus;
 
-	while (pid_list != NULL)
+	while (pid_list != NULL && pid_list->pid != -1)
 	{
 		waitpid(pid_list->pid, &wstatus, 0);
 		pid_list = pid_list->next;
@@ -140,36 +172,43 @@ static int	wait_for_all_children(t_pids *pid_list)
 
 void	run_compound_command(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
 {
-	t_cmd	*command_node;
+	int		nbr_of_commands;
+	t_pipes	*pipe_list;
+	t_pipes	*pipe_node;
 	t_pids	*pid_list;
 	t_pids	*pid_node;
-	int		pipe_fd[2];
+	t_cmd	*command_node;
 
-	command_node = exec_resources->command_list;
-	pid_list = malloc(sizeof(t_pids));
-	if (!pid_list)
+	nbr_of_commands = count_commands(exec_resources->command_list);
+	if (create_pipe_and_pib_lists(&pipe_list, &pid_list, nbr_of_commands) != 0)
 	{
-		ft_dprintf(2, "minishell: malloc() failure in run_compound_command()\n");
-		return ;
+		exit_cleanup(exec_resources, prompt_resources);
+		ft_dprintf(2, "minishell: fatal error occurred while managing a pipe chain\n");
+		exit(EXIT_FAILURE);
 	}
-	pid_list->next = NULL;
+	pipe_node = pipe_list;
 	pid_node = pid_list;
+	command_node = exec_resources->command_list;
 	while (command_node != NULL)
 	{
-		// Pipe
-		pipe(pipe_fd);
-		// Manage possible redirections
 		pid_node->pid = fork();
 		if (pid_node->pid == -1)
 		{
 			ft_dprintf(2, "minishell: fork() failure in run_compound_command()\n");
 			wait_for_all_children(pid_list);
+			free_pipe_list(pipe_list, true);
 			free_pid_list(pid_list);
 			return ;
 		}
+
+		// Child
 		if (pid_node->pid == 0)
 		{
-			if (command_node->next != NULL) // LEFT OFF HERE
+			// LEFT OFF HERE
+			// Here we substitute stdin and stdout for the read and write ends respectively,
+			// depending on which command we are going to run: if it's the first command in the chain,
+			// we don't touch stdin, and if it's the last, we don't touch stdout
+			if (command_node->next != NULL)
 			{
 				dup2(pipe_fd[1], STDOUT_FILENO);
 				close(pipe_fd[1]);
@@ -180,22 +219,16 @@ void	run_compound_command(t_exec_resources *exec_resources, t_prompt_resources *
 				close(pipe_fd[0]);
 			}
 			free_pid_list(pid_list);
-			run_command_in_subshell(command_node, exec_resources, prompt_resources);
+			// Manage possible redirections
+			run_command_in_subshell(command_node, exec_resources, prompt_resources); // In case of error, do we close stdin and stdout here?
+			// And do we close stdin if it's the first command, and stdout if it's the last?
 		}
+
+		// Parent
+		if (pid_node->child_nbr != 1)
+			pipe_node = pipe_node->next;
+		pid_node = pid_node->next;
 		command_node = command_node->next;
-		if (command_node != NULL)
-		{
-			pid_node->next = malloc(sizeof(t_pids));
-			if (!pid_node)
-			{
-				ft_dprintf(2, "minishell: malloc() failure in run_compound_command()\n");
-				wait_for_all_children(pid_list);
-				free_pid_list(pid_list);
-				return ;
-			}
-			pid_node = pid_node->next;
-			pid_node->next = NULL;
-		}
 	}
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
