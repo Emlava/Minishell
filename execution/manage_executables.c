@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/28 20:47:11 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/15 15:10:46 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/15 20:04:08 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	run_executable(char **argv, t_exec_resources *exec_resources,
 		ft_dprintf(2, "minishell: %s: Not such file or directory\n", argv[0]);
 		exit_cleanup(exec_resources, prompt_resources);
 		if (pipe_list != NULL)
-			free_pipe_list(pipe_list, false);
+			free_pipe_list(pipe_list);
 		exit(127);
 	}
 	path_list = ft_split(path_env_var, ':'); // free
@@ -70,7 +70,7 @@ void	run_executable(char **argv, t_exec_resources *exec_resources,
 	{
 		exit_cleanup(exec_resources, prompt_resources);
 		if (pipe_list != NULL)
-			free_pipe_list(pipe_list, false);
+			free_pipe_list(pipe_list);
 		exit(2);
 	}
 	i = 0;
@@ -84,7 +84,7 @@ void	run_executable(char **argv, t_exec_resources *exec_resources,
 			ft_free_str_arr(path_list);
 			exit_cleanup(exec_resources, prompt_resources);
 			if (pipe_list != NULL)
-				free_pipe_list(pipe_list, false);
+				free_pipe_list(pipe_list);
 			exit(3);
 		}
 		if (execve(potential_path, argv, exec_resources->local_envp) == -1
@@ -95,7 +95,7 @@ void	run_executable(char **argv, t_exec_resources *exec_resources,
 			free(potential_path);
 			exit_cleanup(exec_resources, prompt_resources);
 			if (pipe_list != NULL)
-				free_pipe_list(pipe_list, false);
+				free_pipe_list(pipe_list);
 			exit(127);
 		}
 		free(potential_path);

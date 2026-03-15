@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/15 17:50:44 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/15 20:03:47 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ static int	create_pipe_and_pib_lists(t_pipes **pipe_list, t_pids **pid_list, int
 		{
 			if (initialize_pipe_node(&pipe_node->next) != 0)
 			{
-				free_pipe_list(*pipe_list, true);
+				free_pipe_list(*pipe_list);
 				free_pid_list(*pid_list);
 				return (1);
 			}
@@ -103,7 +103,7 @@ static int	create_pipe_and_pib_lists(t_pipes **pipe_list, t_pids **pid_list, int
 		}
 		if (initialize_pid_node(&pid_node->next, child_count) != 0)
 		{
-			free_pipe_list(*pipe_list, true);
+			free_pipe_list(*pipe_list);
 			free_pid_list(*pid_list);
 			return (2);
 		}
@@ -153,7 +153,7 @@ static void	run_command_in_subshell(t_cmd *command_node, t_exec_resources *exec_
 	if (command_node->builtin == false)
 		run_executable(command_node->argv, exec_resources, prompt_resources, pipe_list);
 	exit_cleanup(exec_resources, prompt_resources);
-	free_pipe_list(pipe_list, false);
+	free_pipe_list(pipe_list);
 	exit(exit_status);
 }
 
@@ -206,7 +206,7 @@ void	run_compound_command(t_exec_resources *exec_resources, t_prompt_resources *
 		{
 			ft_dprintf(2, "minishell: fork() failure in run_compound_command()\n");
 			wait_for_all_children(pid_list);
-			free_pipe_list(pipe_list, true);
+			free_pipe_list(pipe_list);
 			free_pid_list(pid_list);
 			return ;
 		}
@@ -214,44 +214,55 @@ void	run_compound_command(t_exec_resources *exec_resources, t_prompt_resources *
 		// Child
 		if (pid_node->pid == 0)
 		{
-			// Middle commands are bugged!
-			// Their output does not reach the next command,
-			// and if they read from stdin, they block because the output from the previous one
-			// didn't reach them.
-			if (pid_node->child_nbr != 1)
-			{
-				if (dup2(pipe_node->pipe[0], STDIN_FILENO) == -1)
-				{
-					free_pipe_list(pipe_list, true);
-					free_pid_list(pid_list);
-					ft_dprintf(2, "minishell: dup2() failure in run_compound_command()\n");
-					exit(EXIT_FAILURE);
-				}
-				close(pipe_node->pipe[0]);
-			}
-			if (pid_node->next != NULL)
+			if (pid_node->child_nbr == 1)
 			{
 				if (dup2(pipe_node->pipe[1], STDOUT_FILENO) == -1)
 				{
-					free_pipe_list(pipe_list, true);
+					free_pipe_list(pipe_list);
 					free_pid_list(pid_list);
 					ft_dprintf(2, "minishell: dup2() failure in run_compound_command()\n");
 					exit(EXIT_FAILURE);
 				}
-				close(pipe_node->pipe[1]);
+				close_unused_fds(pipe_node);
 			}
-			close_unused_fds(pipe_node);
+			else
+			{
+				if (dup2(pipe_node->pipe[0], STDIN_FILENO) == -1)
+				{
+					free_pipe_list(pipe_list);
+					free_pid_list(pid_list);
+					ft_dprintf(2, "minishell: dup2() failure in run_compound_command()\n");
+					exit(EXIT_FAILURE);
+				}
+				if (pid_node->next != NULL)
+				{
+					if (dup2(pipe_node->next->pipe[1], STDOUT_FILENO) == -1)
+					{
+						free_pipe_list(pipe_list);
+						free_pid_list(pid_list);
+						ft_dprintf(2, "minishell: dup2() failure in run_compound_command()\n");
+						exit(EXIT_FAILURE);
+					}
+					close_unused_fds(pipe_node->next);
+				}
+				close(pipe_node->pipe[0]);
+			}
 			free_pid_list(pid_list);
 			// Manage possible redirections
 			run_command_in_subshell(command_node, exec_resources, prompt_resources, pipe_list);
 		}
 
 		// Parent
-		if (pid_node->child_nbr != 1)
+		if (pid_node->child_nbr == 1)
+			close(pipe_node->pipe[1]);
+		else
 		{
 			close(pipe_node->pipe[0]);
-			close(pipe_node->pipe[1]);
-			pipe_node = pipe_node->next;
+			if (pid_node->next != NULL)
+			{
+				pipe_node = pipe_node->next;
+				close(pipe_node->pipe[1]);
+			}
 		}
 		pid_node = pid_node->next;
 		command_node = command_node->next;
@@ -260,7 +271,7 @@ void	run_compound_command(t_exec_resources *exec_resources, t_prompt_resources *
 	signal(SIGQUIT, SIG_IGN);
 	exec_resources->curr_exit_status = wait_for_all_children(pid_list);
 	init_signals();
-	free_pipe_list(pipe_list, false);
+	free_pipe_list(pipe_list);
 	free_pid_list(pid_list);
 	return ;
 }

@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/14 18:55:30 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/14 19:05:14 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/15 20:02:21 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,17 +26,12 @@ void	free_exp_vars(t_new_exports *new_exports)
 	return ;
 }
 
-void	free_pipe_list(t_pipes *pipe_list, bool close_fds)
+void	free_pipe_list(t_pipes *pipe_list)
 {
 	t_pipes	*tmp;
 
 	while (pipe_list)
 	{
-		if (close_fds == true)
-		{
-			close(pipe_list->pipe[0]);
-			close(pipe_list->pipe[1]);
-		}
 		tmp = pipe_list;
 		pipe_list = pipe_list->next;
 		free(tmp);
