@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/14 19:05:46 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/15 15:46:26 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,6 @@ typedef struct s_pids
 {
 	pid_t			pid;
 	int				child_nbr;
-	int				pipe_r_end;
-	int				pipe_w_end;
 	struct s_pids	*next;
 }	t_pids;
 
@@ -93,7 +91,7 @@ char			*define_non_reiterative_path(char *requested_path, t_exec_resources *exec
 
 // **** manage_executables.c **** //
 void			run_executable(char **argv, t_exec_resources *exec_resources,
-					t_prompt_resources *prompt_resources);
+					t_prompt_resources *prompt_resources, t_pipes *pipe_list);
 
 // **** cleaning/cleaning_functions.c **** //
 void			free_exp_vars(t_new_exports *new_exports);

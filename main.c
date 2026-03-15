@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/14 19:47:02 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/15 17:50:44 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	run_simple_command(t_exec_resources *exec_resources, t_prompt_resources *pr
 			return ;
 		}
 		if (pid == 0)
-			run_executable(command_node->argv, exec_resources, prompt_resources);
+			run_executable(command_node->argv, exec_resources, prompt_resources, NULL);
 		signal(SIGINT, SIG_IGN);
         signal(SIGQUIT, SIG_IGN);
 		wait(&wstatus);
@@ -93,7 +93,7 @@ static int	create_pipe_and_pib_lists(t_pipes **pipe_list, t_pids **pid_list, int
 	{
 		if (child_count < nbr_of_children)
 		{
-			if (initialize_pipe_node(pipe_node) != 0)
+			if (initialize_pipe_node(&pipe_node->next) != 0)
 			{
 				free_pipe_list(*pipe_list, true);
 				free_pid_list(*pid_list);
@@ -101,7 +101,7 @@ static int	create_pipe_and_pib_lists(t_pipes **pipe_list, t_pids **pid_list, int
 			}
 			pipe_node = pipe_node->next;
 		}
-		if (initialize_pid_node(pid_node, child_count) != 0)
+		if (initialize_pid_node(&pid_node->next, child_count) != 0)
 		{
 			free_pipe_list(*pipe_list, true);
 			free_pid_list(*pid_list);
@@ -127,8 +127,19 @@ static int	count_commands(t_cmd *command_list)
 	return (command_count);
 }
 
+void	close_unused_fds(t_pipes *pipe_list)
+{
+	while (pipe_list)
+	{
+		close(pipe_list->pipe[0]);
+		close(pipe_list->pipe[1]);
+		pipe_list = pipe_list->next;
+	}
+	return ;
+}
+
 static void	run_command_in_subshell(t_cmd *command_node, t_exec_resources *exec_resources,
-	t_prompt_resources *prompt_resources)
+	t_prompt_resources *prompt_resources, t_pipes *pipe_list)
 {
 	int	exit_status;
 
@@ -140,8 +151,9 @@ static void	run_command_in_subshell(t_cmd *command_node, t_exec_resources *exec_
 	if (exec_resources->last_arg_present == true && command_node->next == NULL)
 		update_local_env_last_arg(exec_resources, command_node->argv);
 	if (command_node->builtin == false)
-		run_executable(command_node->argv, exec_resources, prompt_resources);
+		run_executable(command_node->argv, exec_resources, prompt_resources, pipe_list);
 	exit_cleanup(exec_resources, prompt_resources);
+	free_pipe_list(pipe_list, false);
 	exit(exit_status);
 }
 
@@ -172,15 +184,13 @@ static int	wait_for_all_children(t_pids *pid_list)
 
 void	run_compound_command(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
 {
-	int		nbr_of_commands;
 	t_pipes	*pipe_list;
 	t_pipes	*pipe_node;
 	t_pids	*pid_list;
 	t_pids	*pid_node;
 	t_cmd	*command_node;
 
-	nbr_of_commands = count_commands(exec_resources->command_list);
-	if (create_pipe_and_pib_lists(&pipe_list, &pid_list, nbr_of_commands) != 0)
+	if (create_pipe_and_pib_lists(&pipe_list, &pid_list, count_commands(exec_resources->command_list)) != 0)
 	{
 		exit_cleanup(exec_resources, prompt_resources);
 		ft_dprintf(2, "minishell: fatal error occurred while managing a pipe chain\n");
@@ -204,29 +214,45 @@ void	run_compound_command(t_exec_resources *exec_resources, t_prompt_resources *
 		// Child
 		if (pid_node->pid == 0)
 		{
-			// LEFT OFF HERE
-			// Here we substitute stdin and stdout for the read and write ends respectively,
-			// depending on which command we are going to run: if it's the first command in the chain,
-			// we don't touch stdin, and if it's the last, we don't touch stdout
-			if (command_node->next != NULL)
+			// Middle commands are bugged!
+			// Their output does not reach the next command,
+			// and if they read from stdin, they block because the output from the previous one
+			// didn't reach them.
+			if (pid_node->child_nbr != 1)
 			{
-				dup2(pipe_fd[1], STDOUT_FILENO);
-				close(pipe_fd[1]);
+				if (dup2(pipe_node->pipe[0], STDIN_FILENO) == -1)
+				{
+					free_pipe_list(pipe_list, true);
+					free_pid_list(pid_list);
+					ft_dprintf(2, "minishell: dup2() failure in run_compound_command()\n");
+					exit(EXIT_FAILURE);
+				}
+				close(pipe_node->pipe[0]);
 			}
-			if (pid_node->pid != pid_list->pid)
+			if (pid_node->next != NULL)
 			{
-				dup2(pipe_fd[0], STDIN_FILENO);
-				close(pipe_fd[0]);
+				if (dup2(pipe_node->pipe[1], STDOUT_FILENO) == -1)
+				{
+					free_pipe_list(pipe_list, true);
+					free_pid_list(pid_list);
+					ft_dprintf(2, "minishell: dup2() failure in run_compound_command()\n");
+					exit(EXIT_FAILURE);
+				}
+				close(pipe_node->pipe[1]);
 			}
+			close_unused_fds(pipe_node);
 			free_pid_list(pid_list);
 			// Manage possible redirections
-			run_command_in_subshell(command_node, exec_resources, prompt_resources); // In case of error, do we close stdin and stdout here?
-			// And do we close stdin if it's the first command, and stdout if it's the last?
+			run_command_in_subshell(command_node, exec_resources, prompt_resources, pipe_list);
 		}
 
 		// Parent
 		if (pid_node->child_nbr != 1)
+		{
+			close(pipe_node->pipe[0]);
+			close(pipe_node->pipe[1]);
 			pipe_node = pipe_node->next;
+		}
 		pid_node = pid_node->next;
 		command_node = command_node->next;
 	}
@@ -234,7 +260,9 @@ void	run_compound_command(t_exec_resources *exec_resources, t_prompt_resources *
 	signal(SIGQUIT, SIG_IGN);
 	exec_resources->curr_exit_status = wait_for_all_children(pid_list);
 	init_signals();
+	free_pipe_list(pipe_list, false);
 	free_pid_list(pid_list);
+	return ;
 }
 
 int	main(int ac, char *av[], char *envp[])
