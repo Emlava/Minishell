@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/15 20:03:47 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/17 20:08:04 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -328,15 +328,46 @@ int	main(int ac, char *av[], char *envp[])
 		
 		add_history(exec_resources.user_input);
 		exec_resources.command_list =
-			start_parsing(exec_resources.user_input, exec_resources.local_envp,\
+			start_parsing(exec_resources.user_input, exec_resources.local_envp,
 			exec_resources.new_exports, exec_resources.curr_exit_status);
 		free(exec_resources.user_input);
 		if (exec_resources.command_list == NULL)
 			continue ;
-		if (exec_resources.command_list->next == NULL)
-			run_simple_command(&exec_resources, &prompt_resources);
-		else
-			run_compound_command(&exec_resources, &prompt_resources);
+		// if (exec_resources.command_list->next == NULL)
+		// 	run_simple_command(&exec_resources, &prompt_resources);
+		// else
+		// 	run_compound_command(&exec_resources, &prompt_resources);
+		
+		//
+		// Printing every member of each command_list node
+		t_cmd *command_list_node;
+		command_list_node = exec_resources.command_list;
+		while (command_list_node)
+		{
+			t_redir *redir_node = command_list_node->redirs;
+			int i = 0;
+			while (command_list_node->argv[i])
+			{
+				printf("%s\n", command_list_node->argv[i]);
+				i++;
+			}
+			printf("\n");
+			if (!redir_node)
+				printf("No redirections present\n\n");
+			else
+			{
+				while (redir_node)
+				{
+					if (redir_node->target == NULL)
+						printf("target is NULL\n");
+					printf("type: %d\ntarget: %s\nquoted: %d\n\n", redir_node->type, redir_node->target, redir_node->quoted);
+					redir_node = redir_node->next;
+				}
+			}
+			command_list_node = command_list_node->next;
+		}
+		//
+		
 		free_cmds(exec_resources.command_list);
 	}
 	return (0);
