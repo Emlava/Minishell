@@ -74,11 +74,18 @@ void	add_redir(t_cmd *cmd, t_token *token)
 {
 	t_redir	*redir;
 
+	if (!token || !token->next || !token->next->value)
+		return ;
 	redir = malloc(sizeof(t_redir));
 	if (!redir)
 		return ;
 	redir->type = get_redir_type(token->type);
-	redir->target = token->next->value;
+	redir->target = ft_strdup(token->next->value);
+	if (!redir->target)
+	{
+		free(redir);
+		return ;
+	}
 	redir->quoted = token->next->quoted;
 	redir->next = NULL;
 	redir_add_back(&cmd->redirs, redir);

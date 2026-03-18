@@ -56,6 +56,7 @@ void	free_redirs(t_redir *redir)
 	while (redir)
 	{
 		tmp = redir->next;
+		free(redir->target);
 		free(redir);
 		redir = tmp;
 	}
