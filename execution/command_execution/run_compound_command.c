@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   run_compound_command.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/20 10:11:13 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/20 11:33:58 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/20 12:58:59 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ static void	run_command_in_subshell(t_cmd *command_node, t_exec_resources *exec_
 	int	exit_status;
 
 	signal(SIGINT, SIG_DFL);
-    signal(SIGQUIT, SIG_DFL);
+    signal(SIGQUIT, SIG_IGN);
 	exit_status = 0;
 	if (command_node->builtin)
 		exit_status = manage_builtin(command_node, exec_resources, prompt_resources);	
@@ -158,6 +158,8 @@ void	run_compound_command(t_exec_resources *exec_resources, t_prompt_resources *
 	pipe_node = pipe_list;
 	pid_node = pid_list;
 	command_node = exec_resources->command_list;
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	while (command_node != NULL)
 	{
 		pid_node->pid = fork();
@@ -229,8 +231,6 @@ void	run_compound_command(t_exec_resources *exec_resources, t_prompt_resources *
 		pid_node = pid_node->next;
 		command_node = command_node->next;
 	}
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
 	exec_resources->curr_exit_status = wait_for_all_children(pid_list);
 	init_signals();
 	free_pipe_list(pipe_list);

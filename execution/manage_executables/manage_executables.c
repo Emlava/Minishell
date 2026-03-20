@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   manage_executables.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/28 20:47:11 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/20 10:52:01 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/20 12:59:45 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	run_executable(char **argv, t_exec_resources *exec_resources,
 	char	*tmp_str;
 
 	signal(SIGINT, SIG_DFL);
-    signal(SIGQUIT, SIG_DFL);
+    signal(SIGQUIT, SIG_IGN);
 	if (ft_memchr(argv[0], '/', ft_strlen(argv[0])) != NULL)
 		run_directly(argv, exec_resources, prompt_resources);
 	// else
