@@ -6,7 +6,7 @@
 /*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 19:38:36 by hudescam          #+#    #+#             */
-/*   Updated: 2026/03/13 16:20:05 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/03/20 13:48:08 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ typedef struct s_redir
 	t_redir_type	type;
 	char			*target;
 	int				quoted;
+	int				fd;
 	struct s_redir	*next;
 }	t_redir;
 

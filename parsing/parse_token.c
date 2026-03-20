@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_token.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 10:08:00 by hudescam          #+#    #+#             */
-/*   Updated: 2026/02/28 02:28:17 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/03/20 13:35:58 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ void	add_redir(t_cmd *cmd, t_token *token)
 	}
 	redir->quoted = token->next->quoted;
 	redir->next = NULL;
+	redir->fd = -1;
 	redir_add_back(&cmd->redirs, redir);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/20 12:05:01 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/20 13:43:54 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,23 @@ int	main(int ac, char *av[], char *envp[])
 		free(exec_resources.user_input);
 		if (exec_resources.command_list == NULL)
 			continue ;
-		if (exec_resources.command_list->next == NULL)
-			run_simple_command(&exec_resources, &prompt_resources);
+		if (process_all_heredocs(exec_resources.command_list, &exec_resources))
+		{
+			close(0);
+			open("/dev/tty", O_RDONLY);
+			continue ;
+		}
+		if (exec_resources.command_list->next == NULL
+			&& exec_resources.command_list->builtin != BUILTIN_NONE)
+		{
+			exec_resources.curr_exit_status =
+				manage_builtin(exec_resources.command_list,
+					&exec_resources, &prompt_resources);
+		}
 		else
+		{
 			run_compound_command(&exec_resources, &prompt_resources);
+		}
 		
 		//
 		// Printing every member of each command_list node

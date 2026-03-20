@@ -6,7 +6,7 @@
 /*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/20 10:11:13 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/20 12:58:59 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/03/20 14:02:07 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,16 @@ static int	wait_for_all_children(t_pids *pid_list)
 	}
 }
 
+static void	exit_failure(t_pipes *pipes, t_pids *pids,
+	t_exec_resources *res, t_prompt_resources *prompt)
+{
+	free_pipe_list(pipes);
+	free_pid_list(pids);
+	exit_cleanup(res, prompt);
+	ft_dprintf(2, "minishell: dup2() failure\n");
+	exit(EXIT_FAILURE);
+}
+
 void	run_compound_command(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
 {
 	t_pipes	*pipe_list;
@@ -175,45 +185,48 @@ void	run_compound_command(t_exec_resources *exec_resources, t_prompt_resources *
 		// Child
 		if (pid_node->pid == 0)
 		{
+			//PIPES
 			if (pid_node->child_nbr == 1)
 			{
-				if (dup2(pipe_node->pipe[1], STDOUT_FILENO) == -1)
+				if (command_node->next != NULL)
 				{
-					free_pipe_list(pipe_list);
-					free_pid_list(pid_list);
-					exit_cleanup(exec_resources, prompt_resources);
-					ft_dprintf(2, "minishell: dup2() failure in run_compound_command()\n");
-					exit(EXIT_FAILURE);
+					if (dup2(pipe_node->pipe[1], STDOUT_FILENO) == -1)
+						exit_failure(pipe_list, pid_list, exec_resources, prompt_resources);
 				}
 				close_unused_fds(pipe_node);
 			}
 			else
 			{
 				if (dup2(pipe_node->pipe[0], STDIN_FILENO) == -1)
-				{
-					free_pipe_list(pipe_list);
-					free_pid_list(pid_list);
-					exit_cleanup(exec_resources, prompt_resources);
-					ft_dprintf(2, "minishell: dup2() failure in run_compound_command()\n");
-					exit(EXIT_FAILURE);
-				}
+					exit_failure(pipe_list, pid_list, exec_resources, prompt_resources);
 				if (pid_node->next != NULL)
 				{
 					if (dup2(pipe_node->next->pipe[1], STDOUT_FILENO) == -1)
-					{
-						free_pipe_list(pipe_list);
-						free_pid_list(pid_list);
-						exit_cleanup(exec_resources, prompt_resources);
-						ft_dprintf(2, "minishell: dup2() failure in run_compound_command()\n");
-						exit(EXIT_FAILURE);
-					}
+						exit_failure(pipe_list, pid_list, exec_resources, prompt_resources);
 					close_unused_fds(pipe_node->next);
 				}
 				close(pipe_node->pipe[0]);
 			}
+			//HEREDOC
+			t_redir	*r;
+			int		heredoc_fd;
+			r = command_node->redirs;
+			heredoc_fd = -1;
+			while (r)
+			{
+				if (r->type == HEREDOC)
+					heredoc_fd = r->fd;
+				r = r->next;
+			}
+			if (heredoc_fd != -1)
+			{
+				if (dup2(heredoc_fd, STDIN_FILENO) == -1)
+					exit_failure(pipe_list, pid_list, exec_resources, prompt_resources);
+				close(heredoc_fd);
+			}
 			free_pid_list(pid_list);
-			// Manage possible redirections
-			run_command_in_subshell(command_node, exec_resources, prompt_resources, pipe_list);
+			run_command_in_subshell(command_node,
+				exec_resources, prompt_resources, pipe_list);
 		}
 
 		// Parent

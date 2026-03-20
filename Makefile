@@ -8,7 +8,7 @@ parsing/utils.o parsing/parse_token_helper.o parsing/read_word_helper.o
 EXEC_OBJECTS = execution/prompt_management/manage_prompt.o execution/env_management/env_utils.o execution/builtins_management/builtins.o \
 execution/define_non_reiterative_path/define_non_reiterative_path.o execution/manage_executables/manage_executables.o \
 execution/redirection_management/redirection_management.o execution/command_execution/run_simple_command.o execution/command_execution/run_compound_command.o \
-execution/cleaning/cleaning_functions.o
+execution/cleaning/cleaning_functions.o heredoc.o
 ALL_OBJECTS = main.o $(PARSING_OBJECTS) $(EXEC_OBJECTS)
 
 .PHONY: all clean fclean re leak_check
