@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/20 15:25:27 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/20 17:19:48 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,10 +75,13 @@ int	main(int ac, char *av[], char *envp[])
 			open("/dev/tty", O_RDONLY);
 			continue ;
 		}
-		if (exec_resources.command_list->next == NULL)
-			run_simple_command(&exec_resources, &prompt_resources);
-		else
-			run_compound_command(&exec_resources, &prompt_resources);
+		if (exec_resources.command_list->argv != NULL)
+		{
+			if (exec_resources.command_list->next == NULL)
+				run_simple_command(&exec_resources, &prompt_resources);
+			else
+				run_compound_command(&exec_resources, &prompt_resources);
+		}
 		free_cmds(exec_resources.command_list);
 	}
 	return (0);
