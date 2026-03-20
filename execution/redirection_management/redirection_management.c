@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/20 12:07:55 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/20 15:28:53 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/20 17:28:38 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,14 +101,7 @@ int	heredoc_redirection(t_redir *redirection_info)
 	int		heredoc_fd;
 
 	heredoc_fd = -1;
- // Do we need this loop considering that manage_redirections
- // already loops through all the redir nodes?
-	while (redirection_info)
-	{
-		if (redirection_info->type == HEREDOC)
-			heredoc_fd = redirection_info->fd;
-		redirection_info = redirection_info->next;
-	}
+	heredoc_fd = redirection_info->fd;
 	if (heredoc_fd != -1)
 	{
 		if (dup2(heredoc_fd, STDIN_FILENO) == -1)

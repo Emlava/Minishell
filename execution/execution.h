@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/20 17:02:05 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/20 19:43:35 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,15 +86,41 @@ t_new_exports	*get_local_exp(t_new_exports **new_exports, char *name);
 void			update_local_env_paths(t_exec_resources *exec_resources, char *new_pwd);
 void			update_local_env_last_arg(t_exec_resources *exec_resources, char **argv);
 
-// **** builtins_management/builtins.c **** //
-int				manage_builtin(t_cmd *command, t_exec_resources *exec_resources, t_prompt_resources *prompt_resources);
-
 // **** builtins_management/ft_echo.c **** //
 int				ft_echo(char **argv);
 
 // **** builtins_management/ft_cd.c **** //
 int				ft_cd(char **argv, t_exec_resources *exec_resources,
 					t_prompt_resources *prompt_resources);
+
+// **** builtins_management/ft_pwd.c **** //
+int				ft_pwd(char **argv, char **local_envp);
+
+// **** builtins_management/ft_export_utils.c **** //
+int				valid_identifier_check(char *requested_var);
+int				replace_env_var(char *preexisting_env_var, char *var_name,
+					char *requested_var);
+int				create_exports_list(t_new_exports **exports_node, char *requested_var);
+int				append_or_replace_exports_node(t_new_exports **new_exports,
+					char *var_name, char *requested_var);
+int				replace_exp_var(t_new_exports *preexisting_exp_var,
+					char *requested_var);
+
+// **** builtins_management/ft_export.c **** //
+int				ft_export(char **argv, char **envp, t_new_exports **new_exports);
+
+// **** builtins_management/ft_unset.c **** //
+int				ft_unset(char **argv, t_exec_resources *exec_resources);
+
+// **** builtins_management/ft_env.c **** //
+int				ft_env(char **argv, t_exec_resources *exec_resources);
+
+// **** builtins_management/ft_exit.c **** //
+int				ft_exit(char **argv, t_exec_resources *exec_resources,
+					t_prompt_resources *prompt_resources);
+
+// **** builtins_management/manage_builtin.c **** //
+int				manage_builtin(t_cmd *command, t_exec_resources *exec_resources, t_prompt_resources *prompt_resources);
 
 // **** executables_management/manage_executables.c **** //
 void			run_executable(char **argv, t_exec_resources *exec_resources,
