@@ -6,118 +6,11 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:14:19 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/13 23:56:20 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/20 16:11:26 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-
-static bool	is_valid_n_option(char **option_strs, int *i)
-{
-	int		j;
-	bool	return_value;
-
-	return_value = false;
-	while (option_strs[*i])
-	{
-		j = 0;
-		if (option_strs[*i][j++] == '-')
-		{
-			while (option_strs[*i][j] == 'n')
-				j++;
-			if (option_strs[*i][j] == '\0')
-			{
-				(*i)++;
-				if (return_value == false)
-					return_value = true;
-			}
-			else
-				break ;
-		}
-		else
-			break ;
-	}
-	return (return_value);
-}
-
-int	ft_echo(char **argv)
-{
-	int		i;
-	bool	n_option;
-
-	i = 1;
-	
-	n_option = is_valid_n_option(argv, &i);
-	while (argv[i] != NULL)
-	{
-		printf("%s", argv[i]);
-		if (argv[i + 1] != NULL)
-			printf(" ");
-		i++;
-	}
-	if (n_option == false)
-		printf("\n");
-	return (0);
-}
-
-int	ft_cd(char **argv, t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
-{
-	char		*err_str;
-	char		*final_path;
-	char		*old_internal_pwd;
-
-	if (argv[1] != NULL && strncmp(argv[1], ".", 2) == 0)
-		return (0);
-	if (argv[1] != NULL && argv[2] != NULL)
-	{
-		ft_dprintf(2, "minishell: cd: too many arguments\n");
-		return (2);
-	}
-	if (argv[1] == NULL)
-		final_path = ft_strdup(prompt_resources->home); // free
-	else if (argv[1][0] == '-')
-	{
-		if (argv[1][1] != '\0')
-		{
-			ft_dprintf(2, "minishell: %s: invalid option\n", argv[1]);
-			return (2);
-		}
-		final_path = get_local_env(exec_resources->local_envp, "OLDPWD");
-		if (!final_path)
-		{
-			ft_dprintf(2, "minishell: cd: OLDPWD not set\n");
-			return (1);
-		}
-		final_path = ft_strdup(final_path);
-		printf("%s\n", final_path);
-	}
-	else
-		final_path = define_non_reiterative_path(argv[1], exec_resources, prompt_resources->home);
-	if (final_path == NULL)
-	{
-		ft_dprintf(2, "minishell: cd: failed to manage path because of a malloc() failure\n");
-		return (3);
-	}
-	if (chdir(final_path) == -1)
-	{
-		err_str = ft_strjoin("minishell: cd: ", argv[1]); // free
-		free(final_path);
-		if (err_str != NULL)
-		{
-			perror(err_str);
-			free(err_str);
-		}
-		return (4);
-	}
-	old_internal_pwd = exec_resources->internal_pwd;
-	exec_resources->internal_pwd = ft_strdup(final_path); // free
-	update_local_env_paths(exec_resources, old_internal_pwd);
-	free(old_internal_pwd);
-	free(final_path);
-	if (exec_resources->prompt != NULL)
-		define_prompt(&exec_resources->prompt, prompt_resources, exec_resources->local_envp, exec_resources->internal_pwd);
-	return (0);
-}
 
 int	ft_pwd(char **argv, char **local_envp)
 {
@@ -374,10 +267,3 @@ int	manage_builtin(t_cmd *command, t_exec_resources *exec_resources, t_prompt_re
 	else
 		return (ft_exit(command->argv, exec_resources, prompt_resources));
 }
-
-// Things to free or close:
-// ft_cd():
-// 	-err_str
-// 	-dirp (close)
-// ft_pdw():
-// 	-working_dir

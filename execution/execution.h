@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/20 12:13:48 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/20 17:02:05 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,10 +86,17 @@ t_new_exports	*get_local_exp(t_new_exports **new_exports, char *name);
 void			update_local_env_paths(t_exec_resources *exec_resources, char *new_pwd);
 void			update_local_env_last_arg(t_exec_resources *exec_resources, char **argv);
 
-// **** builtins.c **** //
+// **** builtins_management/builtins.c **** //
 int				manage_builtin(t_cmd *command, t_exec_resources *exec_resources, t_prompt_resources *prompt_resources);
 
-// **** manage_executables/manage_executables.c **** //
+// **** builtins_management/ft_echo.c **** //
+int				ft_echo(char **argv);
+
+// **** builtins_management/ft_cd.c **** //
+int				ft_cd(char **argv, t_exec_resources *exec_resources,
+					t_prompt_resources *prompt_resources);
+
+// **** executables_management/manage_executables.c **** //
 void			run_executable(char **argv, t_exec_resources *exec_resources,
 					t_prompt_resources *prompt_resources, t_pipes *pipe_list);
 
