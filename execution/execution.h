@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/20 19:56:12 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/03/20 20:03:19 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,14 +71,20 @@ typedef struct s_pids
 }	t_pids;
 
 // **** prompt_management/manage_prompt.c **** //
-void			define_prompt(char **prompt, t_prompt_resources *prompt_resources, char **envp, char *internal_pwd);
-bool			setup_prompt_home(char **prompt, t_prompt_resources *prompt_resources, char **envp);
-void			construct_permanent_prompt(t_prompt_resources *prompt_resources, char *user, char *hostname_or_computer, bool free_hostname_or_computer);
+void			define_prompt(char **prompt,
+					t_prompt_resources *prompt_resources,
+					char **envp, char *internal_pwd);
+bool			setup_prompt_home(char **prompt,
+					t_prompt_resources *prompt_resources,
+					char **envp);
+void			construct_permanent_prompt(t_prompt_resources *prompt_resources,
+					char *user, char *hostname_or_computer,
+					bool free_hostname_or_computer);
 void			check_permanent_prompt(t_prompt_resources *prompt_resources);
 
 // **** define_non_reiterative_path/define_non_reiterative_path.c **** //
-char			*define_non_reiterative_path(char *requested_path, t_exec_resources *exec_resources,
-					char *home);
+char			*define_non_reiterative_path(char *requested_path,
+					t_exec_resources *exec_resources, char *home);
 
 // **** env_management/env_utils.c **** //
 char			**duplicate_environment(char *envp[]);
@@ -86,8 +92,10 @@ void			check_essential_env_vars(t_exec_resources *exec_resources);
 void			get_var_indexes(t_exec_resources *exec_resources);
 char			*get_local_env(char **local_envp, char *name);
 t_new_exports	*get_local_exp(t_new_exports **new_exports, char *name);
-void			update_local_env_paths(t_exec_resources *exec_resources, char *new_pwd);
-void			update_local_env_last_arg(t_exec_resources *exec_resources, char **argv);
+void			update_local_env_paths(t_exec_resources *exec_resources,
+					char *new_pwd);
+void			update_local_env_last_arg(t_exec_resources *exec_resources,
+					char **argv);
 void			get_var_indexes_helper(t_exec_resources *exec_resources);
 
 // **** builtins_management/ft_echo.c **** //
@@ -104,14 +112,16 @@ int				ft_pwd(char **argv, char **local_envp);
 int				valid_identifier_check(char *requested_var);
 int				replace_env_var(char *preexisting_env_var, char *var_name,
 					char *requested_var);
-int				create_exports_list(t_new_exports **exports_node, char *requested_var);
+int				create_exports_list(t_new_exports **exports_node,
+					char *requested_var);
 int				append_or_replace_exports_node(t_new_exports **new_exports,
 					char *var_name, char *requested_var);
 int				replace_exp_var(t_new_exports *preexisting_exp_var,
 					char *requested_var);
 
 // **** builtins_management/ft_export.c **** //
-int				ft_export(char **argv, char **envp, t_new_exports **new_exports);
+int				ft_export(char **argv, char **envp,
+					t_new_exports **new_exports);
 
 // **** builtins_management/ft_unset.c **** //
 int				ft_unset(char **argv, t_exec_resources *exec_resources);
@@ -124,7 +134,8 @@ int				ft_exit(char **argv, t_exec_resources *exec_resources,
 					t_prompt_resources *prompt_resources);
 
 // **** builtins_management/manage_builtin.c **** //
-int				manage_builtin(t_cmd *command, t_exec_resources *exec_resources, t_prompt_resources *prompt_resources);
+int				manage_builtin(t_cmd *command, t_exec_resources *exec_resources,
+					t_prompt_resources *prompt_resources);
 
 // **** executables_management/manage_executables.c **** //
 void			run_executable(char **argv, t_exec_resources *exec_resources,
@@ -142,9 +153,9 @@ void			run_simple_command(t_exec_resources *exec_resources,
 					t_prompt_resources *prompt_resources);
 
 // **** command_execution/run_compound_command.c **** //
-void	run_compound_command(t_exec_resources *exec_resources,
+void			run_compound_command(t_exec_resources *exec_resources,
 					t_prompt_resources *prompt_resources);
-					
+
 // **** cleaning/cleaning_functions.c **** //
 void			free_exp_vars(t_new_exports *new_exports);
 void			free_pipe_list(t_pipes *pipe_list);
