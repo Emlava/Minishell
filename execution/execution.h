@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/15 20:02:37 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/20 12:13:48 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,10 @@ typedef struct s_pids
 // **** prompt_management/manage_prompt.c **** //
 void			define_prompt(char **prompt, t_prompt_resources *prompt_resources, char **envp, char *internal_pwd);
 
+// **** define_non_reiterative_path/define_non_reiterative_path.c **** //
+char			*define_non_reiterative_path(char *requested_path, t_exec_resources *exec_resources,
+					char *home);
+
 // **** env_management/env_utils.c **** //
 char			**duplicate_environment(char *envp[]);
 void			check_essential_env_vars(t_exec_resources *exec_resources);
@@ -85,21 +89,26 @@ void			update_local_env_last_arg(t_exec_resources *exec_resources, char **argv);
 // **** builtins.c **** //
 int				manage_builtin(t_cmd *command, t_exec_resources *exec_resources, t_prompt_resources *prompt_resources);
 
-// **** path_management/define_non_reiterative_path.c **** //
-char			*define_non_reiterative_path(char *requested_path, t_exec_resources *exec_resources,
-					char *home);
-
-// **** manage_executables.c **** //
+// **** manage_executables/manage_executables.c **** //
 void			run_executable(char **argv, t_exec_resources *exec_resources,
 					t_prompt_resources *prompt_resources, t_pipes *pipe_list);
 
-// **** cleaning/cleaning_functions.c **** //
-void			free_exp_vars(t_new_exports *new_exports);
+// **** redirection_management/redirection_management.c **** //
+int				manage_redirections(t_redir *redirection_info);
+
+// **** command_execution/run_simple_command.c **** //
+void			run_simple_command(t_exec_resources *exec_resources,
+					t_prompt_resources *prompt_resources);
+
+// **** command_execution/run_compound_command.c **** //
+void	run_compound_command(t_exec_resources *exec_resources,
+					t_prompt_resources *prompt_resources);
 					
-// **** main.c **** //
+// **** cleaning/cleaning_functions.c **** //
 void			free_exp_vars(t_new_exports *new_exports);
 void			free_pipe_list(t_pipes *pipe_list);
 void			free_pid_list(t_pids *pid_list);
-void			exit_cleanup(t_exec_resources *exec_resources, t_prompt_resources *prompt_resources);
+void			exit_cleanup(t_exec_resources *exec_resources,
+					t_prompt_resources *prompt_resources);
 
 #endif

@@ -6,11 +6,11 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/28 20:47:11 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/15 20:04:08 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/20 10:52:01 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../../minishell.h"
 
 static void	run_directly(char **argv, t_exec_resources *exec_resources,
 	t_prompt_resources *prompt_resources)
