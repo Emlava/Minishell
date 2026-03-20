@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/20 12:07:55 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/20 12:39:00 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/20 15:28:53 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ int	input_redirection(t_redir *redirection_info)
 	if (dup2(target_fd, STDIN_FILENO) == -1)
 	{
 		ft_dprintf(2, "minishell: dup2() failure in input_redirection()\n");
+		close(target_fd);
 		return (3);
 	}
 	close(target_fd);
@@ -60,6 +61,7 @@ int	output_redirection(t_redir *redirection_info)
 	if (dup2(target_fd, STDOUT_FILENO) == -1)
 	{
 		ft_dprintf(2, "minishell: dup2() failure in output_redirection()\n");
+		close(target_fd);
 		return (3);
 	}
 	close(target_fd);
@@ -87,9 +89,36 @@ int	output_redirection_append(t_redir *redirection_info)
 	if (dup2(target_fd, STDOUT_FILENO) == -1)
 	{
 		ft_dprintf(2, "minishell: dup2() failure in output_redirection_append()\n");
+		close(target_fd);
 		return (3);
 	}
 	close(target_fd);
+	return (0);
+}
+
+int	heredoc_redirection(t_redir *redirection_info)
+{
+	int		heredoc_fd;
+
+	heredoc_fd = -1;
+ // Do we need this loop considering that manage_redirections
+ // already loops through all the redir nodes?
+	while (redirection_info)
+	{
+		if (redirection_info->type == HEREDOC)
+			heredoc_fd = redirection_info->fd;
+		redirection_info = redirection_info->next;
+	}
+	if (heredoc_fd != -1)
+	{
+		if (dup2(heredoc_fd, STDIN_FILENO) == -1)
+		{
+			ft_dprintf(2, "minishell: dup2() failure in output_redirection_append()\n");
+			close(heredoc_fd);
+			return (1);
+		}
+		close(heredoc_fd);
+	}
 	return (0);
 }
 
@@ -112,8 +141,8 @@ int	manage_redirections(t_redir *redirection_info)
 			if (output_redirection_append(redirection_info) != 0)
 			return (3);
 		}
-		// else
-		// {}
+		else if (heredoc_redirection(redirection_info) != 0)
+				return (4);
 		redirection_info = redirection_info->next;
 	}
 	return (0);

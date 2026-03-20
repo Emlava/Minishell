@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   run_compound_command.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
+/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/20 10:11:13 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/20 14:02:07 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/03/20 15:05:51 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ static int	wait_for_all_children(t_pids *pid_list)
 	}
 }
 
-static void	exit_failure(t_pipes *pipes, t_pids *pids,
+static void	exit_dup2_failure(t_pipes *pipes, t_pids *pids,
 	t_exec_resources *res, t_prompt_resources *prompt)
 {
 	free_pipe_list(pipes);
@@ -191,40 +191,32 @@ void	run_compound_command(t_exec_resources *exec_resources, t_prompt_resources *
 				if (command_node->next != NULL)
 				{
 					if (dup2(pipe_node->pipe[1], STDOUT_FILENO) == -1)
-						exit_failure(pipe_list, pid_list, exec_resources, prompt_resources);
+						exit_dup2_failure(pipe_list, pid_list, exec_resources, prompt_resources);
 				}
 				close_unused_fds(pipe_node);
 			}
 			else
 			{
 				if (dup2(pipe_node->pipe[0], STDIN_FILENO) == -1)
-					exit_failure(pipe_list, pid_list, exec_resources, prompt_resources);
+						exit_dup2_failure(pipe_list, pid_list, exec_resources, prompt_resources);
 				if (pid_node->next != NULL)
 				{
 					if (dup2(pipe_node->next->pipe[1], STDOUT_FILENO) == -1)
-						exit_failure(pipe_list, pid_list, exec_resources, prompt_resources);
+						exit_dup2_failure(pipe_list, pid_list, exec_resources, prompt_resources);
 					close_unused_fds(pipe_node->next);
 				}
 				close(pipe_node->pipe[0]);
 			}
-			//HEREDOC
-			t_redir	*r;
-			int		heredoc_fd;
-			r = command_node->redirs;
-			heredoc_fd = -1;
-			while (r)
-			{
-				if (r->type == HEREDOC)
-					heredoc_fd = r->fd;
-				r = r->next;
-			}
-			if (heredoc_fd != -1)
-			{
-				if (dup2(heredoc_fd, STDIN_FILENO) == -1)
-					exit_failure(pipe_list, pid_list, exec_resources, prompt_resources);
-				close(heredoc_fd);
-			}
 			free_pid_list(pid_list);
+			if (command_node->redirs != NULL)
+			{
+				if (manage_redirections(command_node->redirs) != 0)
+				{
+					free_pipe_list(pipe_list);
+					exit_cleanup(exec_resources, prompt_resources);
+					exit(EXIT_FAILURE);
+				}
+			}
 			run_command_in_subshell(command_node,
 				exec_resources, prompt_resources, pipe_list);
 		}

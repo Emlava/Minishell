@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
+/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/20 13:43:54 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/03/20 15:25:27 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,53 +75,10 @@ int	main(int ac, char *av[], char *envp[])
 			open("/dev/tty", O_RDONLY);
 			continue ;
 		}
-		if (exec_resources.command_list->next == NULL
-			&& exec_resources.command_list->builtin != BUILTIN_NONE)
-		{
-			exec_resources.curr_exit_status =
-				manage_builtin(exec_resources.command_list,
-					&exec_resources, &prompt_resources);
-		}
+		if (exec_resources.command_list->next == NULL)
+			run_simple_command(&exec_resources, &prompt_resources);
 		else
-		{
 			run_compound_command(&exec_resources, &prompt_resources);
-		}
-		
-		//
-		// Printing every member of each command_list node
-		// t_cmd *command_list_node;
-		// command_list_node = exec_resources.command_list;
-		// while (command_list_node)
-		// {
-		// 	t_redir *redir_node = command_list_node->redirs;
-		// 	int i = 0;
-		// 	if (command_list_node->argv[0] == NULL)
-		// 	{
-		// 		printf("argv[0] is NULL\n");
-		// 		continue ;
-		// 	}
-		// 	while (command_list_node->argv[i])
-		// 	{
-		// 		printf("%s\n", command_list_node->argv[i]);
-		// 		i++;
-		// 	}
-		// 	printf("\n");
-		// 	if (!redir_node)
-		// 		printf("No redirections present\n\n");
-		// 	else
-		// 	{
-		// 		while (redir_node)
-		// 		{
-		// 			if (redir_node->target == NULL)
-		// 				printf("target is NULL\n");
-		// 			printf("type: %d\ntarget: %s\nquoted: %d\n\n", redir_node->type, redir_node->target, redir_node->quoted);
-		// 			redir_node = redir_node->next;
-		// 		}
-		// 	}
-		// 	command_list_node = command_list_node->next;
-		// }
-		// //
-		
 		free_cmds(exec_resources.command_list);
 	}
 	return (0);
