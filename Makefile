@@ -10,7 +10,8 @@ execution/builtins_management/ft_cd.o execution/builtins_management/ft_pwd.o exe
 execution/builtins_management/ft_unset.o execution/builtins_management/ft_env.o execution/builtins_management/ft_exit.o \
 execution/define_non_reiterative_path/define_non_reiterative_path.o execution/executables_management/manage_executables.o \
 execution/redirection_management/redirection_management.o execution/command_execution/run_simple_command.o execution/command_execution/run_compound_command.o \
-execution/cleaning/cleaning_functions.o heredoc.o
+execution/cleaning/cleaning_functions.o heredoc.o heredoc_helper.o execution/env_management/env_utils_helper.o execution/redirection_management/redirection_management_helper.o \
+execution/prompt_management/manage_prompt_helper.o
 ALL_OBJECTS = main.o $(PARSING_OBJECTS) $(EXEC_OBJECTS)
 
 .PHONY: all clean fclean re leak_check

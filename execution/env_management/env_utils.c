@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 18:13:02 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/13 23:57:47 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/20 19:05:59 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,22 +21,21 @@ char	**duplicate_environment(char *envp[])
 	env_var_count = 0;
 	while (envp[env_var_count] != NULL)
 		env_var_count++;
-	env_duplicate = malloc(sizeof(char*) * (env_var_count + 1)); // free
+	env_duplicate = malloc(sizeof(char *) * (env_var_count + 1));
 	if (env_duplicate == NULL)
 		return (NULL);
-	i = 0;
-	while (i < env_var_count)
+	i = -1;
+	while (++i < env_var_count)
 	{
 		if (ft_strncmp(envp[i], "_=", 2) != 0)
-			env_duplicate[i] = ft_strdup(envp[i]); // free each
+			env_duplicate[i] = ft_strdup(envp[i]);
 		else
-			env_duplicate[i] = ft_strdup("_=./minishell"); // free
+			env_duplicate[i] = ft_strdup("_=./minishell");
 		if (env_duplicate[i] == NULL)
 		{
 			ft_free_str_arr(env_duplicate);
 			return (NULL);
 		}
-		i++;
 	}
 	env_duplicate[i] = NULL;
 	return (env_duplicate);
@@ -64,27 +63,9 @@ void	get_var_indexes(t_exec_resources *exec_resources)
 	int	i;
 
 	i = 0;
-	while (exec_resources->local_envp[i] && ft_strncmp(exec_resources->local_envp[i], "PWD=", 4))
-		i++;
-	if (exec_resources->local_envp[i])
-	{
-		exec_resources->pwd_index = i;
-		exec_resources->pwd_present = true;
-	}
-	else
-		exec_resources->pwd_present = false;
-	i = 0;
-	while (exec_resources->local_envp[i] && ft_strncmp(exec_resources->local_envp[i], "OLDPWD=", 7))
-		i++;
-	if (exec_resources->local_envp[i])
-	{
-		exec_resources->oldpwd_index = i;
-		exec_resources->oldpwd_present = true;
-	}
-	else
-		exec_resources->oldpwd_present = false;
-	i = 0;
-	while (exec_resources->local_envp[i] && ft_strncmp(exec_resources->local_envp[i], "_=", 2))
+	get_var_indexes_helper(exec_resources);
+	while (exec_resources->local_envp[i]
+		&& ft_strncmp(exec_resources->local_envp[i], "_=", 2))
 		i++;
 	if (exec_resources->local_envp[i])
 	{
@@ -102,7 +83,7 @@ char	*get_local_env(char **local_envp, char *name)
 	size_t	formatted_name_len;
 	int		i;
 
-	formatted_name = ft_strjoin(name, "="); // free
+	formatted_name = ft_strjoin(name, "=");
 	if (formatted_name == NULL)
 		return (NULL);
 	formatted_name_len = ft_strlen(formatted_name);
@@ -116,9 +97,6 @@ char	*get_local_env(char **local_envp, char *name)
 	return (local_envp[i] + formatted_name_len);
 }
 
-// Unlike get_local_env(), this function will return the node containing
-// the requested variable, not simply a pointer to the value of the variable,
-// or NULL if the varaible is not found.
 t_new_exports	*get_local_exp(t_new_exports **new_exports, char *name)
 {
 	char			*formatted_name;
@@ -127,7 +105,7 @@ t_new_exports	*get_local_exp(t_new_exports **new_exports, char *name)
 
 	if (*new_exports == NULL)
 		return (NULL);
-	formatted_name = ft_strjoin(name, "="); // free
+	formatted_name = ft_strjoin(name, "=");
 	if (formatted_name == NULL)
 		return (NULL);
 	formatted_name_len = ft_strlen(formatted_name);
@@ -139,34 +117,4 @@ t_new_exports	*get_local_exp(t_new_exports **new_exports, char *name)
 	if (curr_exp_var == NULL)
 		return (NULL);
 	return (curr_exp_var);
-}
-
-void	update_local_env_paths(t_exec_resources *exec_resources, char *old_internal_pwd)
-{
-	if (exec_resources->pwd_present == true)
-	{
-		free(exec_resources->local_envp[exec_resources->pwd_index]);
-		exec_resources->local_envp[exec_resources->pwd_index] = ft_strjoin("PWD=", exec_resources->internal_pwd); // This is freed when freeing local_envp	
-	}
-	if (exec_resources->oldpwd_present == true)
-	{
-		free(exec_resources->local_envp[exec_resources->oldpwd_index]);
-		exec_resources->local_envp[exec_resources->oldpwd_index]
-			= ft_strjoin("OLDPWD=", old_internal_pwd); // This is freed when freeing local_envp	
-	}
-	return ;
-}
-
-void	update_local_env_last_arg(t_exec_resources *exec_resources, char **argv)
-{
-	char	*last_arg;
-	int		i;
-
-	i = 0;
-	while (argv[i + 1] != NULL)
-		i++;
-	last_arg = argv[i];
-	free(exec_resources->local_envp[exec_resources->last_arg_index]);
-	exec_resources->local_envp[exec_resources->last_arg_index] = ft_strjoin("_=", last_arg); // This is freed when freeing local_envp	
-	return ;
 }

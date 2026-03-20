@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/20 19:43:35 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/20 19:56:12 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,9 @@ typedef struct s_pids
 
 // **** prompt_management/manage_prompt.c **** //
 void			define_prompt(char **prompt, t_prompt_resources *prompt_resources, char **envp, char *internal_pwd);
+bool			setup_prompt_home(char **prompt, t_prompt_resources *prompt_resources, char **envp);
+void			construct_permanent_prompt(t_prompt_resources *prompt_resources, char *user, char *hostname_or_computer, bool free_hostname_or_computer);
+void			check_permanent_prompt(t_prompt_resources *prompt_resources);
 
 // **** define_non_reiterative_path/define_non_reiterative_path.c **** //
 char			*define_non_reiterative_path(char *requested_path, t_exec_resources *exec_resources,
@@ -85,6 +88,7 @@ char			*get_local_env(char **local_envp, char *name);
 t_new_exports	*get_local_exp(t_new_exports **new_exports, char *name);
 void			update_local_env_paths(t_exec_resources *exec_resources, char *new_pwd);
 void			update_local_env_last_arg(t_exec_resources *exec_resources, char **argv);
+void			get_var_indexes_helper(t_exec_resources *exec_resources);
 
 // **** builtins_management/ft_echo.c **** //
 int				ft_echo(char **argv);
@@ -128,6 +132,10 @@ void			run_executable(char **argv, t_exec_resources *exec_resources,
 
 // **** redirection_management/redirection_management.c **** //
 int				manage_redirections(t_redir *redirection_info);
+int				output_redirection(t_redir *redirection_info);
+int				input_redirection(t_redir *redirection_info);
+int				output_redirection_append(t_redir *redirection_info);
+int				heredoc_redirection(t_redir *redirection_info);
 
 // **** command_execution/run_simple_command.c **** //
 void			run_simple_command(t_exec_resources *exec_resources,
