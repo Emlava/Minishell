@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/20 20:03:19 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/21 15:58:20 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,6 +151,20 @@ int				heredoc_redirection(t_redir *redirection_info);
 // **** command_execution/run_simple_command.c **** //
 void			run_simple_command(t_exec_resources *exec_resources,
 					t_prompt_resources *prompt_resources);
+
+// **** command_execution/create_pipe_and_pib_lists.c **** //
+int				create_pipe_and_pib_lists(t_pipes **pipe_list,
+					t_pids **pid_list, int nbr_of_children);
+
+// **** command_execution/run_compound_command_utils.c **** //
+int				count_commands(t_cmd *command_list);
+void			close_unused_fds(t_pipes *pipe_list);
+void			run_command_in_subshell(t_cmd *command_node,
+					t_exec_resources *exec_resources,
+					t_prompt_resources *prompt_resources, t_pipes *pipe_list);
+int				wait_for_all_children(t_pids *pid_list);
+void			exit_dup2_failure(t_pipes *pipes, t_pids *pids,
+					t_exec_resources *res, t_prompt_resources *prompt);
 
 // **** command_execution/run_compound_command.c **** //
 void			run_compound_command(t_exec_resources *exec_resources,

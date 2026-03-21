@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/20 18:30:35 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/20 19:46:17 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/20 20:56:48 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ int	ft_export(char **argv, char **envp, t_new_exports **new_exports)
 
 	if (argv[1] == NULL)
 	{
+		// print everything but $_
 		ft_dprintf(2, "minishell: export: argument needed\n");
 		return (1);
 	}

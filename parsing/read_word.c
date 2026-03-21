@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_word.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
+/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 10:40:42 by hudescam          #+#    #+#             */
-/*   Updated: 2026/03/13 15:32:45 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/03/21 14:24:46 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ char	*append_single_quoted(char *word, char *line, int *i)
 		(*i)++;
 	if (!line[*i])
 	{
-		ft_printf("Quote arent closed\n");
+		ft_printf("Quotes aren't closed\n");
 		free(word);
 		return (NULL);
 	}
@@ -86,7 +86,7 @@ char	*append_double_quoted(char *word, char *line, int *i, t_parse_ctx *ctx)
 		(*i)++;
 	if (!line[*i])
 	{
-		ft_printf("Quote arent closed\n");
+		ft_printf("Quotes aren't closed\n");
 		free(word);
 		return (NULL);
 	}
