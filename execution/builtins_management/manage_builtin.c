@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:14:19 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/22 10:50:25 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/22 18:03:23 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,7 @@ static int	run_builtin(t_cmd *command, t_exec_resources *exec_resources,
 	else if (command->builtin == BUILTIN_PWD)
 		return (ft_pwd(command->argv, exec_resources->local_envp));
 	else if (command->builtin == BUILTIN_EXPORT)
-		return (ft_export(command->argv, exec_resources->local_envp,
-				&exec_resources->new_exports));
+		return (ft_export(command->argv, exec_resources));
 	else if (command->builtin == BUILTIN_UNSET)
 		return (ft_unset(command->argv, exec_resources));
 	else if (command->builtin == BUILTIN_ENV)

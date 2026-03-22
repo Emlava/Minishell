@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/21 15:36:44 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/21 15:43:40 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/22 16:30:52 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,29 +36,6 @@ void	close_unused_fds(t_pipes *pipe_list)
 	return ;
 }
 
-void	run_command_in_subshell(t_cmd *command_node,
-	t_exec_resources *exec_resources, t_prompt_resources *prompt_resources,
-	t_pipes *pipe_list)
-{
-	int	exit_status;
-
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_IGN);
-	exit_status = 0;
-	if (command_node->builtin)
-		exit_status = manage_builtin(command_node, exec_resources,
-				prompt_resources);
-	if (exec_resources->last_arg_present == true
-		&& command_node->next == NULL)
-		update_local_env_last_arg(exec_resources, command_node->argv);
-	if (command_node->builtin == false)
-		run_executable(command_node->argv, exec_resources,
-			prompt_resources, pipe_list);
-	exit_cleanup(exec_resources, prompt_resources);
-	free_pipe_list(pipe_list);
-	exit(exit_status);
-}
-
 // Returns the exit status of the last child process.
 int	wait_for_all_children(t_pids *pid_list)
 {
@@ -84,11 +61,11 @@ int	wait_for_all_children(t_pids *pid_list)
 	}
 }
 
-void	exit_dup2_failure(t_pipes *pipes, t_pids *pids,
+void	exit_dup2_failure(t_subshell_resources *subshell_resources,
 	t_exec_resources *res, t_prompt_resources *prompt)
 {
-	free_pipe_list(pipes);
-	free_pid_list(pids);
+	free_pipe_list(subshell_resources->pipe_list);
+	free_pid_list(subshell_resources->pid_list);
 	exit_cleanup(res, prompt);
 	ft_dprintf(2, "minishell: dup2() failure\n");
 	exit(EXIT_FAILURE);

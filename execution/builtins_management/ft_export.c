@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/20 18:30:35 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/20 20:56:48 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/22 18:13:26 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,29 +60,51 @@ static int	process_requested_var(char *requested_var, char **envp,
 	return (0);
 }
 
+static void	print_exported_vars(t_exec_resources *exec_resources)
+{
+	int				i;
+	t_new_exports	*exports_node;
+
+	i = 0;
+	while (exec_resources->local_envp[i])
+	{
+		if (exec_resources->last_arg_present == false
+			|| i != exec_resources->last_arg_index)
+			printf("declare -x %s\n", exec_resources->local_envp[i]);
+		i++;
+	}
+	exports_node = exec_resources->new_exports;
+	while (exports_node)
+	{
+		printf("declare -x %s\n", exports_node->var);
+		exports_node = exports_node->next;
+	}
+	return ;
+}
+
 // ft_export() will immediately stop exporting if an invalid identifier is found
 // or if an error occurs.
-int	ft_export(char **argv, char **envp, t_new_exports **new_exports)
+int	ft_export(char **argv, t_exec_resources *exec_resources)
 {
 	int	i;
 	int	return_value;
 
 	if (argv[1] == NULL)
 	{
-		// print everything but $_
-		ft_dprintf(2, "minishell: export: argument needed\n");
-		return (1);
+		print_exported_vars(exec_resources);
+		return (0);
 	}
 	if (argv[1][0] == '-')
 	{
 		ft_dprintf(2, "minishell: export: %s: no options for this builtin\n",
 			argv[1]);
-		return (2);
+		return (1);
 	}
 	i = 1;
 	while (argv[i])
 	{
-		return_value = process_requested_var(argv[i], envp, new_exports);
+		return_value = process_requested_var(argv[i],
+				exec_resources->local_envp, &exec_resources->new_exports);
 		if (return_value != 0)
 			return (return_value);
 		i++;

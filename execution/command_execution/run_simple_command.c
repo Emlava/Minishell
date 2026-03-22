@@ -6,11 +6,29 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/20 10:10:45 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/21 14:20:46 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/22 18:24:52 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
+
+static void	redir_loop(t_cmd *command_node, t_exec_resources *exec_resources,
+	t_prompt_resources *prompt_resources)
+{
+	t_redir	*redir_node;
+
+	redir_node = command_node->redirs;
+	while (redir_node != NULL)
+	{
+		if (manage_redirections(redir_node) != 0)
+		{
+			exit_cleanup(exec_resources, prompt_resources);
+			exit(EXIT_FAILURE);
+		}
+		redir_node = redir_node->next;
+	}
+	return ;
+}
 
 static int	run_exec_in_child(t_cmd *command_node,
 	t_exec_resources *exec_resources, t_prompt_resources *prompt_resources)
@@ -26,14 +44,7 @@ static int	run_exec_in_child(t_cmd *command_node,
 	}
 	if (pid == 0)
 	{
-		if (command_node->redirs != NULL)
-		{
-			if (manage_redirections(command_node->redirs) != 0)
-			{
-				exit_cleanup(exec_resources, prompt_resources);
-				exit(EXIT_FAILURE);
-			}
-		}
+		redir_loop(command_node, exec_resources, prompt_resources);
 		run_executable(command_node->argv, exec_resources,
 			prompt_resources, NULL);
 	}

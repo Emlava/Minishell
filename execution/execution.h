@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/21 15:58:20 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/22 18:07:29 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,15 @@ typedef struct s_pids
 	struct s_pids	*next;
 }	t_pids;
 
+typedef struct s_subshell_resources
+{
+	t_pipes	*pipe_list;
+	t_pipes	*pipe_node;
+	t_pids	*pid_list;
+	t_pids	*pid_node;
+	t_cmd	*command_node;
+}	t_subshell_resources;
+
 // **** prompt_management/manage_prompt.c **** //
 void			define_prompt(char **prompt,
 					t_prompt_resources *prompt_resources,
@@ -82,9 +91,22 @@ void			construct_permanent_prompt(t_prompt_resources *prompt_resources,
 					bool free_hostname_or_computer);
 void			check_permanent_prompt(t_prompt_resources *prompt_resources);
 
+// **** define_non_reiterative_path/manage_absolute_path_utils.c **** //
+char			*put_final_path_together(char **fields, int fields_count);
+void			free_fields(char **fields, int fields_count);
+
+// **** define_non_reiterative_path/manage_absolute_path.c **** //
+char			*manage_absolute_path(char *requested_path);
+
 // **** define_non_reiterative_path/define_non_reiterative_path.c **** //
 char			*define_non_reiterative_path(char *requested_path,
 					t_exec_resources *exec_resources, char *home);
+
+// **** env_management/env_utils_helper.c **** //
+void			get_var_indexes_helper(t_exec_resources *exec_resources);
+void			update_local_env_paths(t_exec_resources *res, char *old_pwd);
+void			update_local_env_last_arg(t_exec_resources *exec_resources,
+					char **argv);
 
 // **** env_management/env_utils.c **** //
 char			**duplicate_environment(char *envp[]);
@@ -92,11 +114,6 @@ void			check_essential_env_vars(t_exec_resources *exec_resources);
 void			get_var_indexes(t_exec_resources *exec_resources);
 char			*get_local_env(char **local_envp, char *name);
 t_new_exports	*get_local_exp(t_new_exports **new_exports, char *name);
-void			update_local_env_paths(t_exec_resources *exec_resources,
-					char *new_pwd);
-void			update_local_env_last_arg(t_exec_resources *exec_resources,
-					char **argv);
-void			get_var_indexes_helper(t_exec_resources *exec_resources);
 
 // **** builtins_management/ft_echo.c **** //
 int				ft_echo(char **argv);
@@ -120,8 +137,7 @@ int				replace_exp_var(t_new_exports *preexisting_exp_var,
 					char *requested_var);
 
 // **** builtins_management/ft_export.c **** //
-int				ft_export(char **argv, char **envp,
-					t_new_exports **new_exports);
+int				ft_export(char **argv, t_exec_resources *exec_resources);
 
 // **** builtins_management/ft_unset.c **** //
 int				ft_unset(char **argv, t_exec_resources *exec_resources);
@@ -153,17 +169,20 @@ void			run_simple_command(t_exec_resources *exec_resources,
 					t_prompt_resources *prompt_resources);
 
 // **** command_execution/create_pipe_and_pib_lists.c **** //
-int				create_pipe_and_pib_lists(t_pipes **pipe_list,
-					t_pids **pid_list, int nbr_of_children);
+int				create_pipe_and_pib_lists(
+					t_subshell_resources *subshell_resources,
+					int nbr_of_children);
+
+// **** command_execution/manage_subshell.c **** //
+int				create_subshell(t_subshell_resources *resources,
+					t_exec_resources *exec_resources,
+					t_prompt_resources *prompt_resources);
 
 // **** command_execution/run_compound_command_utils.c **** //
 int				count_commands(t_cmd *command_list);
 void			close_unused_fds(t_pipes *pipe_list);
-void			run_command_in_subshell(t_cmd *command_node,
-					t_exec_resources *exec_resources,
-					t_prompt_resources *prompt_resources, t_pipes *pipe_list);
 int				wait_for_all_children(t_pids *pid_list);
-void			exit_dup2_failure(t_pipes *pipes, t_pids *pids,
+void			exit_dup2_failure(t_subshell_resources *subshell_resources,
 					t_exec_resources *res, t_prompt_resources *prompt);
 
 // **** command_execution/run_compound_command.c **** //
