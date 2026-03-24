@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 18:13:02 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/20 19:05:59 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/03/24 19:37:32 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,24 +97,17 @@ char	*get_local_env(char **local_envp, char *name)
 	return (local_envp[i] + formatted_name_len);
 }
 
-t_new_exports	*get_local_exp(t_new_exports **new_exports, char *name)
+int	get_local_env_index(char **envp, char *var_name)
 {
-	char			*formatted_name;
-	size_t			formatted_name_len;
-	t_new_exports	*curr_exp_var;
+	int		i;
+	size_t	var_len;
 
-	if (*new_exports == NULL)
-		return (NULL);
-	formatted_name = ft_strjoin(name, "=");
-	if (formatted_name == NULL)
-		return (NULL);
-	formatted_name_len = ft_strlen(formatted_name);
-	curr_exp_var = *new_exports;
-	while (curr_exp_var != NULL
-		&& ft_strncmp(curr_exp_var->var, formatted_name, formatted_name_len))
-		curr_exp_var = curr_exp_var->next;
-	free(formatted_name);
-	if (curr_exp_var == NULL)
-		return (NULL);
-	return (curr_exp_var);
+	i = 0;
+	var_len = ft_strlen(var_name);
+	while (envp[i] && ft_strncmp(var_name, envp[i], var_len) != 0)
+		i++;
+	if (envp[i] == NULL)
+		return (-1);
+	else
+		return (i);
 }

@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/20 18:30:35 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/22 18:13:26 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/24 19:36:43 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static int	export_var(char *requested_var, char **envp,
 {
 	int				i;
 	char			*var_name;
-	char			*preexisting_env_var;
+	int				preexisting_env_var_index;
 	int				return_value;
 
 	i = 0;
@@ -27,9 +27,10 @@ static int	export_var(char *requested_var, char **envp,
 	if (!var_name)
 		return (1);
 	ft_strlcpy(var_name, requested_var, i + 1);
-	preexisting_env_var = get_local_env(envp, var_name);
-	if (preexisting_env_var != NULL)
-		return (replace_env_var(preexisting_env_var, var_name, requested_var));
+	preexisting_env_var_index = get_local_env_index(envp, var_name);
+	if (preexisting_env_var_index != -1)
+		return (replace_env_var(envp,
+				preexisting_env_var_index, requested_var));
 	if (*new_exports == NULL)
 	{
 		free(var_name);

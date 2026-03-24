@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/20 19:39:04 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/20 19:47:16 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/24 19:39:40 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,18 +26,6 @@ int	valid_identifier_check(char *requested_var)
 			return (1);
 		i++;
 	}
-	return (0);
-}
-
-int	replace_env_var(char *preexisting_env_var, char *var_name,
-	char *requested_var)
-{
-	preexisting_env_var -= (ft_strlen(var_name) + 1);
-	free(var_name);
-	free(preexisting_env_var);
-	preexisting_env_var = ft_strdup(requested_var);
-	if (preexisting_env_var == NULL)
-		return (2);
 	return (0);
 }
 

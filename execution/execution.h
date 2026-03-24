@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 15:10:32 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/22 18:07:29 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/24 20:35:01 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,9 @@ char			*define_non_reiterative_path(char *requested_path,
 					t_exec_resources *exec_resources, char *home);
 
 // **** env_management/env_utils_helper.c **** //
+int				replace_env_var(char **envp, int var_index,
+					char *requested_var);
+t_new_exports	*get_local_exp(t_new_exports **new_exports, char *name);
 void			get_var_indexes_helper(t_exec_resources *exec_resources);
 void			update_local_env_paths(t_exec_resources *res, char *old_pwd);
 void			update_local_env_last_arg(t_exec_resources *exec_resources,
@@ -113,7 +116,7 @@ char			**duplicate_environment(char *envp[]);
 void			check_essential_env_vars(t_exec_resources *exec_resources);
 void			get_var_indexes(t_exec_resources *exec_resources);
 char			*get_local_env(char **local_envp, char *name);
-t_new_exports	*get_local_exp(t_new_exports **new_exports, char *name);
+int				get_local_env_index(char **envp, char *var_name);
 
 // **** builtins_management/ft_echo.c **** //
 int				ft_echo(char **argv);
@@ -127,8 +130,6 @@ int				ft_pwd(char **argv, char **local_envp);
 
 // **** builtins_management/ft_export_utils.c **** //
 int				valid_identifier_check(char *requested_var);
-int				replace_env_var(char *preexisting_env_var, char *var_name,
-					char *requested_var);
 int				create_exports_list(t_new_exports **exports_node,
 					char *requested_var);
 int				append_or_replace_exports_node(t_new_exports **new_exports,

@@ -6,14 +6,43 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 12:50:52 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/22 10:21:10 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/24 20:30:18 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+static void	adjust_shlvl(char **envp, int shlvl_index)
+{
+	int		i;
+	int		shlvl_int;
+	char	*shlvl_str;
+	char	*tmp_str;
+
+	i = 0;
+	while (envp[shlvl_index][i] && envp[shlvl_index][i] != '=')
+		i++;
+	if (!envp[shlvl_index][i++])
+		return ;
+	shlvl_int = ft_atoi(envp[shlvl_index] + i);
+	if (shlvl_int > 0)
+	{
+		tmp_str = ft_itoa(++shlvl_int);
+		shlvl_str = ft_strjoin("SHLVL=", tmp_str);
+		free(tmp_str);
+		if (shlvl_str)
+		{
+			replace_env_var(envp, shlvl_index, shlvl_str);
+			free(shlvl_str);
+		}
+	}
+	return ;
+}
+
 static int	init_shell(t_exec_resources *exec, char **envp)
 {
+	int	shlvl_index;
+
 	exec->internal_pwd = getenv("PWD");
 	if (!exec->internal_pwd)
 	{
@@ -28,6 +57,9 @@ static int	init_shell(t_exec_resources *exec, char **envp)
 		return (3);
 	check_essential_env_vars(exec);
 	get_var_indexes(exec);
+	shlvl_index = get_local_env_index(exec->local_envp, "SHLVL=");
+	if (shlvl_index != -1)
+		adjust_shlvl(exec->local_envp, shlvl_index);
 	exec->new_exports = NULL;
 	exec->prompt = NULL;
 	exec->curr_exit_status = 0;
