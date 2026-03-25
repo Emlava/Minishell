@@ -108,7 +108,7 @@ static void	shell_loop(t_exec_resources *ex_r, t_prompt_resources *pr_r)
 		}
 		add_history(ex_r->user_input);
 		ex_r->command_list = start_parsing(ex_r->user_input, ex_r->local_envp,
-				ex_r->new_exports, ex_r->curr_exit_status);
+				ex_r->new_exports, &ex_r->curr_exit_status);
 		free(ex_r->user_input);
 		process_commands(ex_r, pr_r);
 	}

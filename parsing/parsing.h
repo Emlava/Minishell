@@ -134,6 +134,6 @@ void			sigint_handler(int sig);
 void			init_signals(void);
 
 t_cmd			*start_parsing(char *line, char **envp,
-					struct s_new_exports *ne, int exit_status);
+					struct s_new_exports *ne, int *exit_status);
 
 #endif

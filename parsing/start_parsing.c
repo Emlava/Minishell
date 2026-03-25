@@ -6,102 +6,62 @@
 /*   By: hudescam <hudescam@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 16:25:10 by hudescam          #+#    #+#             */
-/*   Updated: 2026/03/13 15:32:45 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/03/25 10:00:00 by hudescam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing.h"
 
-// static void print_tokens(t_token *t)
-// {
-//     while (t)
-//     {
-//         if (t->type == TOKEN_WORD)
-//             ft_printf("WORD(%s)\n", t->value);
-//         else if (t->type == TOKEN_PIPE)
-//             ft_printf("PIPE\n");
-//         else if (t->type == TOKEN_REDIR_IN)
-//             ft_printf("REDIR_IN\n");
-//         else if (t->type == TOKEN_REDIR_OUT)
-//             ft_printf("REDIR_OUT\n");
-//         else if (t->type == TOKEN_REDIR_APPEND)
-//             ft_printf("REDIR_APPEND\n");
-//         else if (t->type == TOKEN_HEREDOC)
-//             ft_printf("HEREDOC\n");
-//         t = t->next;
-//     }
-// }
-
-// static void	print_cmds(t_cmd *cmd)
-// {
-// 	t_redir	*tmp;
-// 	int		i;
-
-// 	while (cmd)
-// 	{
-// 		ft_printf("=== COMMAND ===\n");
-// 		i = 0;
-// 		while (cmd->argv && cmd->argv[i])
-// 		{
-// 			ft_printf("ARG: %s\n", cmd->argv[i]);
-// 			i++;
-// 		}
-// 		tmp = cmd->redirs;
-// 		while (tmp)
-// 		{
-// 			ft_printf("REDIR type: %d target: %s quoted: %d\n",
-// 				tmp->type, tmp->target, tmp->quoted);
-// 			tmp = tmp->next;
-// 		}
-// 		cmd = cmd->next;
-// 	}
-// }
-
-t_cmd	*start_parsing(char *line, char **envp, struct s_new_exports *ne,
-		int exit_status)
+static int	line_is_blank(char *line)
 {
-	t_token	*tokens;
-	t_cmd	*cmds;
+	int	i;
 
-	if (!line)
-		return (NULL);
-	tokens = lexer(line, envp, ne, exit_status);
-	if (!tokens)
-		return (NULL);
-	if (!check_syntax(tokens))
+	i = 0;
+	while (line[i])
 	{
-		free_tokens(tokens);
-		return (NULL);
+		if (!ft_isspace(line[i]))
+			return (0);
+		i++;
 	}
-	cmds = parse_tokens(tokens);
-	free_tokens(tokens);
-	return (cmds);
+	return (1);
 }
 
-// int	main(void)
-// {
-// 	char	*line;
-// 	t_token	*tokens;
-// 	t_cmd	*cmds;
+static int	mark_parse_error(int *exit_status)
+{
+	if (exit_status)
+		*exit_status = 2;
+	return (1);
+}
 
-// 	init_signals();
-// 	while (1)
-// 	{
-// 		line = readline("minishell$ ");
-// 		if (!line)
-// 		{
-// 			ft_printf("exit\n");
-// 			break ;
-// 		}
-// 		tokens = lexer(line);
-// 		if (tokens && check_syntax(tokens))
-// 		{
-// 			cmds = parse_tokens(tokens);
-// 			print_cmds(cmds);
-// 			free_cmds(cmds);
-// 		}
-// 		free_tokens(tokens);
-// 		free(line);
-// 	}
-// 	return (0);
-// }
+static int	parse_has_error(t_token *tokens, int *exit_status)
+{
+	if (!tokens)
+		return (mark_parse_error(exit_status));
+	if (!check_syntax(tokens))
+	{
+		mark_parse_error(exit_status);
+		free_tokens(tokens);
+		return (1);
+	}
+	return (0);
+}
+
+t_cmd	*start_parsing(char *line, char **envp, struct s_new_exports *ne,
+				int *exit_status)
+{
+	t_token	*tokens;
+	t_cmd	*t_cmds;
+	int		status;
+
+	if (!line || line_is_blank(line))
+		return (NULL);
+	status = 0;
+	if (exit_status)
+		status = *exit_status;
+	tokens = lexer(line, envp, ne, status);
+	if (parse_has_error(tokens, exit_status))
+		return (NULL);
+	t_cmds = parse_tokens(tokens);
+	free_tokens(tokens);
+	return (t_cmds);
+}
