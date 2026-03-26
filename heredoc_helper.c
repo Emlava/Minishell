@@ -39,6 +39,19 @@ static char	*expand_if_needed(char *line, t_exec_resources *res, int quoted)
 	return (result);
 }
 
+static int	handle_null_line(int fd[2])
+{
+	if (g_signal == 130)
+	{
+		close(fd[0]);
+		close(fd[1]);
+		init_signals();
+		g_signal = 0;
+		return (130);
+	}
+	return (0);
+}
+
 int	process_heredoc_helper(t_redir *redir, int fd[2], t_exec_resources *res)
 {
 	char	*line;
@@ -48,10 +61,9 @@ int	process_heredoc_helper(t_redir *redir, int fd[2], t_exec_resources *res)
 		line = readline("> ");
 		if (!line)
 		{
-			close(fd[0]);
-			close(fd[1]);
-			init_signals();
-			return (130);
+			if (handle_null_line(fd) == 130)
+				return (130);
+			break ;
 		}
 		if (!ft_strcmp(line, redir->target))
 		{

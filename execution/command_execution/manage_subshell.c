@@ -54,7 +54,7 @@ static void	run_command_in_subshell(t_cmd *command_node,
 	int	exit_status;
 
 	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_IGN);
+	signal(SIGQUIT, SIG_DFL);
 	exit_status = 0;
 	if (command_node->builtin)
 		exit_status = manage_builtin(command_node, exec_resources,

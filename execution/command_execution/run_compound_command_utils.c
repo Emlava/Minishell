@@ -55,7 +55,12 @@ int	wait_for_all_children(t_pids *pid_list)
 			if (WTERMSIG(wstatus) == SIGINT)
 				write(2, "\n", 1);
 			else if (WTERMSIG(wstatus) == SIGQUIT)
-				ft_dprintf(2, "Quit (core dumped)\n");
+			{
+				if (WCOREDUMP(wstatus))
+					ft_dprintf(2, "Quit (core dumped)\n");
+				else
+					ft_dprintf(2, "Quit\n");
+			}
 		}
 		return (WTERMSIG(wstatus) + 128);
 	}

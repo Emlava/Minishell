@@ -84,7 +84,7 @@ void	run_executable(char **argv, t_exec_resources *exec_resources,
 	char	*path_env_var;
 
 	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_IGN);
+	signal(SIGQUIT, SIG_DFL);
 	if (ft_memchr(argv[0], '/', ft_strlen(argv[0])) != NULL)
 		run_directly(argv, exec_resources, prompt_resources);
 	path_env_var = get_local_env(exec_resources->local_envp, "PATH");

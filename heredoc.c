@@ -16,6 +16,7 @@ void	sigint_heredoc(int sig)
 {
 	(void)sig;
 	write(1, "\n", 1);
+	g_signal = 130;
 	close(0);
 }
 
