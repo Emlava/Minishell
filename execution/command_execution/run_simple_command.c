@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/20 10:10:45 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/22 18:24:52 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/26 17:03:19 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,8 @@ void	run_simple_command(t_exec_resources *exec_resources,
 		if (run_exec_in_child(command_node, exec_resources,
 				prompt_resources) != 0)
 			return ;
+
+		// The problem must be around here!
 		signal(SIGINT, SIG_IGN);
 		signal(SIGQUIT, SIG_IGN);
 		wait(&wstatus);
