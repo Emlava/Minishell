@@ -10,7 +10,7 @@ is not asked is not required.", so such types of features _should not_ be expect
 ### Instructions
 #### Installation
 Run  
-```git clone https://github.com/Emlava/Minishell.git Minshell```
+```git clone https://github.com/Emlava/Minishell.git Minishell```
 #### Compilation
 Go into the Minishell repository by running ```cd Minishell``` and run the ```make``` command.  
 The ```make``` command can take the following arguments:  
