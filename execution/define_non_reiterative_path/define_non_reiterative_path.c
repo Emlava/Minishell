@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 14:18:15 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/22 17:29:58 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/26 16:56:26 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,6 @@ static char	*manage_relative_path(char *requested_path, char *pwd)
 	return (final_path);
 }
 
-static void	manage_tilde(char **requested_path, char *home)
-{
-	*requested_path = ft_strjoin(home, (*requested_path) + 1);
-	return ;
-}
-
 char	*define_non_reiterative_path(char *requested_path,
 	t_exec_resources *exec_resources, char *home)
 {
@@ -42,7 +36,7 @@ char	*define_non_reiterative_path(char *requested_path,
 	if (requested_path[0] == '~'
 		&& (requested_path[1] == '/' || requested_path[1] == '\0'))
 	{
-		manage_tilde(&requested_path, home);
+		requested_path = ft_strjoin(home, requested_path + 1);
 		if (requested_path == NULL)
 			return (NULL);
 	}

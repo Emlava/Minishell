@@ -6,7 +6,7 @@
 /*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/20 16:10:57 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/23 20:51:06 by elara-va         ###   ########.fr       */
+/*   Updated: 2026/03/26 16:54:30 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static int	determine_target_dir(char *given_path, char **target_dir,
 		return_value = manage_hyphen(given_path, exec_resources, target_dir);
 	else if (given_path[0] == '~'
 		&& (given_path[1] == '/' || given_path[1] == '\0'))
-		*target_dir = ft_strjoin(home, given_path);
+		*target_dir = ft_strjoin(home, given_path + 1);
 	else
 		*target_dir = ft_strdup(given_path);
 	if (!*target_dir)

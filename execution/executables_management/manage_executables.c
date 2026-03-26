@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   manage_executables.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hudescam <hudescam@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: elara-va <elara-va@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/28 20:47:11 by elara-va          #+#    #+#             */
-/*   Updated: 2026/03/20 19:48:14 by hudescam         ###   ########.fr       */
+/*   Updated: 2026/03/26 16:11:31 by elara-va         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ void	run_executable(char **argv, t_exec_resources *exec_resources,
 	path_env_var = get_local_env(exec_resources->local_envp, "PATH");
 	if (!path_env_var)
 	{
-		ft_dprintf(2, "minishell: %s: Not such file or directory\n", argv[0]);
+		ft_dprintf(2, "minishell: %s: No such file or directory\n", argv[0]);
 		exit_exec_err(exec_resources, prompt_resources, pipe_list, 127);
 	}
 	execute_from_path(argv, exec_resources, prompt_resources, pipe_list);
