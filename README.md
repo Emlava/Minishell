@@ -29,4 +29,4 @@ Once the compilation is done and the executable is created, start the minishell 
 * Bash Reference Manual: https://www.gnu.org/software/bash/manual/bash.html
 
   #### AI Usage
-  AI use was limited during the development of this project, involving explanations for general C or data structures concepts, but never to directly implement features of the shell, and much less to generate code.
+  AI use was limited during the development of this project, involving explanations for general C or data structure concepts, but never to directly implement features of the shell, and much less to generate code.
